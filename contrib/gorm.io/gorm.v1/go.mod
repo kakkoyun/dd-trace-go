@@ -4,9 +4,9 @@ go 1.22.0
 
 require (
 	github.com/DataDog/dd-trace-go/contrib/database/sql/v2 v2.0.0-rc.2
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jackc/pgx/v5 v5.6.0
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/lib/pq v1.10.2
 	github.com/microsoft/go-mssqldb v0.21.0
 	github.com/stretchr/testify v1.10.0
