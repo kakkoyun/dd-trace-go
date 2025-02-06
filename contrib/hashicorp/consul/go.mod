@@ -3,8 +3,8 @@ module github.com/kakkoyun/dd-trace-go/contrib/hashicorp/consul/v2
 go 1.22.0
 
 require (
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/hashicorp/consul/api v1.24.0
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 )
 
