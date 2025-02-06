@@ -3,10 +3,10 @@ module github.com/kakkoyun/dd-trace-go/contrib/graphql-go/graphql/v2
 go 1.22.0
 
 require (
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/graphql-go/graphql v0.8.1
 	github.com/graphql-go/handler v0.2.3
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 )
 
