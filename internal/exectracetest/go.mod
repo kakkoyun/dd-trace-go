@@ -4,8 +4,8 @@ go 1.22.0
 
 require (
 	github.com/DataDog/dd-trace-go/contrib/database/sql/v2 v2.0.0-rc.2
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/google/pprof v0.0.0-20230817174616-7a8ec2ada47b
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/mattn/go-sqlite3 v1.14.18
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
 )
