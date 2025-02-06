@@ -15,8 +15,8 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/profiler"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/profiler"
 )
 
 // Config is the configuration for a test app used by RunHTTP.

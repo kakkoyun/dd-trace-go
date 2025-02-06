@@ -6,7 +6,7 @@
 package elastic
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 	"math"
 	"net/http"
 )

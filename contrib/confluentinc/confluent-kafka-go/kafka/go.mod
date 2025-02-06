@@ -1,9 +1,9 @@
-module github.com/DataDog/dd-trace-go/contrib/confluentinc/confluent-kafka-go/kafka/v2
+module github.com/kakkoyun/dd-trace-go/contrib/confluentinc/confluent-kafka-go/kafka/v2
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/goleak v1.3.0
@@ -81,4 +81,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../../..

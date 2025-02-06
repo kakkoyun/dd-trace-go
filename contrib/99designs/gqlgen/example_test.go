@@ -11,8 +11,8 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler/testserver"
 
-	gqlgentrace "github.com/DataDog/dd-trace-go/contrib/99designs/gqlgen/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	gqlgentrace "github.com/kakkoyun/dd-trace-go/contrib/99designs/gqlgen/v2"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 )
 
 func Example() {

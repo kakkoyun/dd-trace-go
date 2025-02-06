@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/profiler/internal/pprofutils"
+	"github.com/kakkoyun/dd-trace-go/v2/profiler/internal/pprofutils"
 
 	pprofile "github.com/google/pprof/profile"
 	"github.com/stretchr/testify/assert"
@@ -284,7 +284,7 @@ main.main()
 		// spawGoroutines spawns n goroutines, waits for them to start executing,
 		// and then returns a func to stop them. For more details about `executing`
 		// see:
-		// https://github.com/DataDog/dd-trace-go/pull/942#discussion_r656924335
+		// https://github.com/kakkoyun/dd-trace-go/pull/942#discussion_r656924335
 		spawnGoroutines := func(n int) func() {
 			executing := make(chan struct{})
 			stopping := make(chan struct{})

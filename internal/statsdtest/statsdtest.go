@@ -3,14 +3,14 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2016 Datadog, Inc.
 
-package statsdtest // import "github.com/DataDog/dd-trace-go/v2/internal/statsdtest"
+package statsdtest // import "github.com/kakkoyun/dd-trace-go/v2/internal/statsdtest"
 
 import (
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -10,8 +10,8 @@ package tracer
 import (
 	"strconv"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace"
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/constants"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/constants"
 	"github.com/tinylib/msgp/msgp"
 )
 

@@ -1,11 +1,11 @@
-module github.com/DataDog/dd-trace-go/v2/internal/contrib/validationtest
+module github.com/kakkoyun/dd-trace-go/v2/internal/contrib/validationtest
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/contrib/bradfitz/gomemcache/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/contrib/miekg/dns/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/contrib/bradfitz/gomemcache/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/contrib/miekg/dns/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/bradfitz/gomemcache v0.0.0-20230611145640-acc696258285
 	github.com/miekg/dns v1.1.55
 	github.com/stretchr/testify v1.10.0
@@ -85,8 +85,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/contrib/bradfitz/gomemcache/v2 => ../../../contrib/bradfitz/gomemcache
+replace github.com/kakkoyun/dd-trace-go/contrib/bradfitz/gomemcache/v2 => ../../../contrib/bradfitz/gomemcache
 
-replace github.com/DataDog/dd-trace-go/contrib/miekg/dns/v2 => ../../../contrib/miekg/dns
+replace github.com/kakkoyun/dd-trace-go/contrib/miekg/dns/v2 => ../../../contrib/miekg/dns
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

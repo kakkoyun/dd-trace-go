@@ -8,10 +8,10 @@ package namingschematest
 import (
 	"testing"
 
-	saramatrace "github.com/DataDog/dd-trace-go/contrib/Shopify/sarama/v2"
-	"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	saramatrace "github.com/kakkoyun/dd-trace-go/contrib/Shopify/sarama/v2"
+	"github.com/kakkoyun/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 	"github.com/Shopify/sarama"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

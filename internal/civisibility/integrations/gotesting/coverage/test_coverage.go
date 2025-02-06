@@ -15,10 +15,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/integrations"
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/utils"
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/utils/telemetry"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/integrations"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/utils"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/utils/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 const (

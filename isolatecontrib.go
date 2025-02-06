@@ -77,7 +77,7 @@ func main() {
 
 func generateGoMod(contribDir, dependencyPath string) error {
 	// Build the v2 import path for the contrib package.
-	importPath := fmt.Sprintf("github.com/DataDog/dd-trace-go/%s/v2", contribDir)
+	importPath := fmt.Sprintf("github.com/kakkoyun/dd-trace-go/%s/v2", contribDir)
 
 	// Resolve the dependency version from the go.mod file.
 	var (
@@ -125,7 +125,7 @@ func generateGoMod(contribDir, dependencyPath string) error {
 
 func goGetV2() error {
 	currentBranch := revParse("HEAD")
-	importPath := fmt.Sprintf("github.com/DataDog/dd-trace-go/v2@%s", currentBranch)
+	importPath := fmt.Sprintf("github.com/kakkoyun/dd-trace-go/v2@%s", currentBranch)
 	cmd := exec.Command("go", "get", "-u", importPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

@@ -1,9 +1,9 @@
-module github.com/DataDog/dd-trace-go/contrib/hashicorp/consul/v2
+module github.com/kakkoyun/dd-trace-go/contrib/hashicorp/consul/v2
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/hashicorp/consul/api v1.24.0
 	github.com/stretchr/testify v1.10.0
 )
@@ -93,7 +93,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..
 
 // Pin github.com/armon/go-metrics to the last version available to avoid breaking changes
 // due to the migration to github.com/hashicorp/go-metrics.

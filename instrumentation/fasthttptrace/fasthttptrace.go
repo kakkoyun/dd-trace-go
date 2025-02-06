@@ -6,8 +6,8 @@
 package fasthttptrace
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
 
 	"github.com/valyala/fasthttp"
 )

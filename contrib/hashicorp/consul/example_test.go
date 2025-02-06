@@ -10,11 +10,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 	consul "github.com/hashicorp/consul/api"
 
-	ddconsul "github.com/DataDog/dd-trace-go/contrib/hashicorp/consul/v2"
+	ddconsul "github.com/kakkoyun/dd-trace-go/contrib/hashicorp/consul/v2"
 )
 
 // Here's an example illustrating a simple use case for interacting with consul with tracing enabled.

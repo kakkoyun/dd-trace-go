@@ -9,7 +9,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/testutils"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/testutils"
 
 	"github.com/stretchr/testify/assert"
 )

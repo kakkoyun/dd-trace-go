@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -286,7 +286,7 @@ func TestAcquire(t *testing.T) {
 	assert.Equal(t, ps.SpanID(), s.ParentID())
 }
 
-// https://github.com/DataDog/dd-trace-go/issues/2908
+// https://github.com/kakkoyun/dd-trace-go/issues/2908
 func TestWrapTracer(t *testing.T) {
 	testCases := []struct {
 		name           string

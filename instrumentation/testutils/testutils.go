@@ -10,11 +10,11 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec"
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/normalizer"
-	"github.com/DataDog/dd-trace-go/v2/internal/statsdtest"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/normalizer"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/statsdtest"
 )
 
 func SetGlobalServiceName(t *testing.T, val string) {

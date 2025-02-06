@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/statsdtest"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/statsdtest"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -183,7 +183,7 @@ func TestLogWriter(t *testing.T) {
 			},
 			metaStruct: map[string]any{
 				"_dd.stack": map[string]string{
-					"0": "github.com/DataDog/dd-trace-go/v1/internal/tracer.TestLogWriter",
+					"0": "github.com/kakkoyun/dd-trace-go/v1/internal/tracer.TestLogWriter",
 				},
 			},
 			metrics: map[string]float64{
@@ -209,7 +209,7 @@ func TestLogWriter(t *testing.T) {
 			Meta: map[string]string{
 				"env":       "prod",
 				"version":   "1.26.0",
-				"_dd.stack": "{\"0\":\"github.com/DataDog/dd-trace-go/v1/internal/tracer.TestLogWriter\"}",
+				"_dd.stack": "{\"0\":\"github.com/kakkoyun/dd-trace-go/v1/internal/tracer.TestLogWriter\"}",
 			},
 			MetaStruct: nil,
 			Metrics: map[string]float64{

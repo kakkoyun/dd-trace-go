@@ -8,8 +8,8 @@ package mongo_test
 import (
 	"context"
 
-	mongotrace "github.com/DataDog/dd-trace-go/contrib/go.mongodb.org/mongo-driver/v2/mongo"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	mongotrace "github.com/kakkoyun/dd-trace-go/contrib/go.mongodb.org/mongo-driver/v2/mongo"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"

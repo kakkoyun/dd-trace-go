@@ -9,10 +9,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/instrumentation/testutils/grpc/v2/fixturepb"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/instrumentation/testutils/grpc/v2/fixturepb"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"

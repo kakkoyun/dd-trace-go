@@ -10,7 +10,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/utils/net"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/utils/net"
 	"github.com/stretchr/testify/assert"
 )
 

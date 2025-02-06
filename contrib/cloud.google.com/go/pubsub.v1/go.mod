@@ -1,10 +1,10 @@
-module github.com/DataDog/dd-trace-go/contrib/cloud.google.com/go/pubsub.v1/v2
+module github.com/kakkoyun/dd-trace-go/contrib/cloud.google.com/go/pubsub.v1/v2
 
 go 1.22.0
 
 require (
 	cloud.google.com/go/pubsub v1.36.1
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 	google.golang.org/api v0.169.0
 	google.golang.org/grpc v1.69.0
@@ -102,4 +102,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../../..

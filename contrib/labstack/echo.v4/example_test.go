@@ -10,10 +10,10 @@ import (
 	"io"
 	"net/http"
 
-	echotrace "github.com/DataDog/dd-trace-go/contrib/labstack/echo.v4/v2"
-	httptrace "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
-	"github.com/DataDog/dd-trace-go/v2/appsec"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	echotrace "github.com/kakkoyun/dd-trace-go/contrib/labstack/echo.v4/v2"
+	httptrace "github.com/kakkoyun/dd-trace-go/contrib/net/http/v2"
+	"github.com/kakkoyun/dd-trace-go/v2/appsec"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/labstack/echo/v4"
 )

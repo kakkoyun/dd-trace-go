@@ -1,9 +1,9 @@
-module github.com/DataDog/dd-trace-go/instrumentation/testutils/grpc/v2
+module github.com/kakkoyun/dd-trace-go/instrumentation/testutils/grpc/v2
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	google.golang.org/grpc v1.69.0
 	google.golang.org/protobuf v1.35.1
 )
@@ -75,4 +75,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

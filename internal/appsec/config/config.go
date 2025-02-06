@@ -13,9 +13,9 @@ import (
 
 	internal "github.com/DataDog/appsec-internal-go/appsec"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/remoteconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/remoteconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
 )
 
 func init() {

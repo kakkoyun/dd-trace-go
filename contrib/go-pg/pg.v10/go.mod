@@ -1,9 +1,9 @@
-module github.com/DataDog/dd-trace-go/contrib/go-pg/pg.v10/v2
+module github.com/kakkoyun/dd-trace-go/contrib/go-pg/pg.v10/v2
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/go-pg/pg/v10 v10.11.1
 	github.com/stretchr/testify v1.10.0
 )
@@ -92,4 +92,4 @@ require (
 	mellium.im/sasl v0.3.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

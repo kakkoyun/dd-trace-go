@@ -3,15 +3,15 @@
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
 // Copyright 2016 Datadog, Inc.
 
-package http // import "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
+package http // import "github.com/kakkoyun/dd-trace-go/contrib/net/http/v2"
 
 //go:generate sh -c "go run ./internal/make_responsewriter | gofmt > trace_gen.go"
 
 import (
 	"net/http"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/httptrace"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/httptrace"
 )
 
 const componentName = instrumentation.PackageNetHTTP

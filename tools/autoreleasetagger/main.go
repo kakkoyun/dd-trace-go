@@ -15,12 +15,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/version"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/version"
 )
 
 var (
 	defaultExcludedModules = []string{
-		"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2",
+		"github.com/kakkoyun/dd-trace-go/instrumentation/internal/namingschematest/v2",
 	}
 	defaultExcludedDirs = []string{
 		".github",
@@ -533,7 +533,7 @@ func moduleShortName(root, mod GoMod) (string, error) {
 		return "", fmt.Errorf("failed to get relative path: %w", err)
 	}
 	// e.g.
-	// - github.com/DataDog/dd-trace-go/contrib/google.golang.org/api/v2 => contrib/google.golang.org/api/v2
+	// - github.com/kakkoyun/dd-trace-go/contrib/google.golang.org/api/v2 => contrib/google.golang.org/api/v2
 	// - github.com/Datadog/dd-trace-go/contrib/envoyproxy/go-control-plane/v2 => contrib/envoyproxy/go-control-plane/v2
 	return strings.TrimPrefix(rel, "../"), nil
 }

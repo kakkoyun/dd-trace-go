@@ -19,7 +19,7 @@ import (
 	"golang.org/x/mod/modfile"
 )
 
-const netHTTPPath = "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
+const netHTTPPath = "github.com/kakkoyun/dd-trace-go/contrib/net/http/v2"
 
 type pinning struct {
 	headCommit string
@@ -84,7 +84,7 @@ func (p pinning) loadOutdatedDDTraceMods() ([]string, error) {
 	mods := make([]string, 0, 2) // On average, we expect to pin 1 or 2 modules, so we start with a small capacity.
 	foundNetHTTP := false
 	for _, dep := range deps.Require {
-		if !strings.HasPrefix(dep.Mod.Path, "github.com/DataDog/dd-trace-go/v2") {
+		if !strings.HasPrefix(dep.Mod.Path, "github.com/kakkoyun/dd-trace-go/v2") {
 			continue
 		}
 		if dep.Mod.Path == netHTTPPath {

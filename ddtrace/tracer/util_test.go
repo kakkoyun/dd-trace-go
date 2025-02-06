@@ -10,7 +10,7 @@ import (
 	"math"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/samplernames"
 	"github.com/stretchr/testify/assert"
 )
 

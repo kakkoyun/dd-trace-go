@@ -130,7 +130,7 @@ func main() {
 		for _, im := range imports {
 			// the module name and the import path might be different (when the imported package is a sub-package)
 			importModule := im
-			if strings.HasPrefix(im, "github.com/DataDog/dd-trace-go") {
+			if strings.HasPrefix(im, "github.com/kakkoyun/dd-trace-go") {
 				if left, _, ok := strings.Cut(im, "/v2"); ok {
 					importModule = left + "/v2"
 				}

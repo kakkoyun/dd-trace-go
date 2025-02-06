@@ -14,10 +14,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	httproutertrace "github.com/DataDog/dd-trace-go/contrib/julienschmidt/httprouter/v2"
-	"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	httproutertrace "github.com/kakkoyun/dd-trace-go/contrib/julienschmidt/httprouter/v2"
+	"github.com/kakkoyun/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 var julienschmidtHTTPRouter = harness.TestCase{

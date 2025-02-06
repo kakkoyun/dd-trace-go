@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/samplernames"
 )
 
 // toFloat64 attempts to convert value into a float64. If the value is an integer

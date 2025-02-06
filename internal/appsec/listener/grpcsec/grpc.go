@@ -6,14 +6,14 @@
 package grpcsec
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/dyngo"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/grpcsec"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/waf/addresses"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/trace"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/config"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/listener"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/listener/httpsec"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/dyngo"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/grpcsec"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/waf/addresses"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/trace"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/config"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/listener"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/listener/httpsec"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 type Feature struct{}

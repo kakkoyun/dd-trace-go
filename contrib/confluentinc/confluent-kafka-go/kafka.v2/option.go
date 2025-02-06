@@ -8,7 +8,7 @@ package kafka
 import (
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 
-	tracing "github.com/DataDog/dd-trace-go/v2/contrib/confluentinc/confluent-kafka-go"
+	tracing "github.com/kakkoyun/dd-trace-go/v2/contrib/confluentinc/confluent-kafka-go"
 )
 
 // Option describes an option for the Kafka integration.

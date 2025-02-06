@@ -11,8 +11,8 @@ import (
 	"math"
 	"sync"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/samplernames"
 )
 
 // Sampler is an interface for sampling traces.

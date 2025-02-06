@@ -14,10 +14,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/listener/httpsec"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/listener/httpsec"
 )
 
 var (
@@ -34,7 +34,7 @@ func init() {
 // http.useragent). Any further span start option can be added with opts.
 func StartRequestSpan(r *http.Request, opts ...tracer.StartSpanOption) (*tracer.Span, context.Context) {
 	// Append our span options before the given ones so that the caller can "overwrite" them.
-	// TODO(): rework span start option handling (https://github.com/DataDog/dd-trace-go/issues/1352)
+	// TODO(): rework span start option handling (https://github.com/kakkoyun/dd-trace-go/issues/1352)
 
 	var ipTags map[string]string
 	if cfg.traceClientIP {

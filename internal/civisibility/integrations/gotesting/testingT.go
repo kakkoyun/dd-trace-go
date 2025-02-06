@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/integrations"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/integrations"
 )
 
 // T is a type alias for testing.T to provide additional methods for CI visibility.

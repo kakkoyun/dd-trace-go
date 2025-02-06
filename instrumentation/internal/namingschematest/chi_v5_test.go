@@ -14,10 +14,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	chitrace "github.com/DataDog/dd-trace-go/contrib/go-chi/chi.v5/v2"
-	"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	chitrace "github.com/kakkoyun/dd-trace-go/contrib/go-chi/chi.v5/v2"
+	"github.com/kakkoyun/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 var chiV5Test = harness.TestCase{

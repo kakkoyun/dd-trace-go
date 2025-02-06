@@ -8,8 +8,8 @@ package config
 import (
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry/telemetrytest"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry/telemetrytest"
 )
 
 func TestSCAEnabled(t *testing.T) {

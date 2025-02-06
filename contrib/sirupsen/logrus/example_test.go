@@ -10,9 +10,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
-	ddlogrus "github.com/DataDog/dd-trace-go/contrib/sirupsen/logrus/v2"
+	ddlogrus "github.com/kakkoyun/dd-trace-go/contrib/sirupsen/logrus/v2"
 	"github.com/sirupsen/logrus"
 )
 

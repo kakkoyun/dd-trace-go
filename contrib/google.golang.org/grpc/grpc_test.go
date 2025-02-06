@@ -17,11 +17,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/instrumentation/testutils/grpc/v2/fixturepb"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/testutils"
+	"github.com/kakkoyun/dd-trace-go/instrumentation/testutils/grpc/v2/fixturepb"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/testutils"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -1027,7 +1027,7 @@ func (rt *roundTripper) RoundTrip(r *http.Request) (*http.Response, error) {
 }
 
 func TestIssue2050(t *testing.T) {
-	// https://github.com/DataDog/dd-trace-go/issues/2050
+	// https://github.com/kakkoyun/dd-trace-go/issues/2050
 	t.Setenv("DD_SERVICE", "some-dd-service")
 
 	spansFound := make(chan bool, 1)

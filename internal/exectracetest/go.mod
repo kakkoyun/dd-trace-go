@@ -1,10 +1,10 @@
-module github.com/DataDog/dd-trace-go/internal/exectracetest/v2
+module github.com/kakkoyun/dd-trace-go/internal/exectracetest/v2
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/contrib/database/sql/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/contrib/database/sql/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/google/pprof v0.0.0-20230817174616-7a8ec2ada47b
 	github.com/mattn/go-sqlite3 v1.14.18
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f
@@ -79,6 +79,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/contrib/database/sql/v2 => ../../contrib/database/sql
+replace github.com/kakkoyun/dd-trace-go/contrib/database/sql/v2 => ../../contrib/database/sql
 
-replace github.com/DataDog/dd-trace-go/v2 => ../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../..

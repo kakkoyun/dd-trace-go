@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
+	"github.com/kakkoyun/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
 )
 
 func TestNamingSchema(t *testing.T) {

@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry/telemetrytest"
-	"github.com/DataDog/dd-trace-go/v2/profiler"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry/telemetrytest"
+	"github.com/kakkoyun/dd-trace-go/v2/profiler"
 
 	"github.com/stretchr/testify/assert"
 )

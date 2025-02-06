@@ -17,8 +17,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	globalinternal "github.com/DataDog/dd-trace-go/v2/internal"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	globalinternal "github.com/kakkoyun/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 type traceWriter interface {

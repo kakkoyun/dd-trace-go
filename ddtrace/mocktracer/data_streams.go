@@ -11,7 +11,7 @@ import (
 
 	"github.com/tinylib/msgp/msgp"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/datastreams"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/datastreams"
 )
 
 type mockDSMTransport struct {

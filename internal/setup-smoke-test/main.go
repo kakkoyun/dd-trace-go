@@ -12,9 +12,9 @@ import (
 	"net/http"
 	"os"
 
-	httptrace "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/profiler"
+	httptrace "github.com/kakkoyun/dd-trace-go/contrib/net/http/v2"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/profiler"
 )
 
 func main() {

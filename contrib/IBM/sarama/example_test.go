@@ -10,8 +10,8 @@ import (
 	"errors"
 	"log"
 
-	saramatrace "github.com/DataDog/dd-trace-go/contrib/IBM/sarama/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	saramatrace "github.com/kakkoyun/dd-trace-go/contrib/IBM/sarama/v2"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/IBM/sarama"
 )

@@ -1,10 +1,10 @@
-module github.com/DataDog/dd-trace-go/contrib/gorilla/mux/v2
+module github.com/kakkoyun/dd-trace-go/contrib/gorilla/mux/v2
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/contrib/net/http/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/contrib/net/http/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/gorilla/mux v1.8.0
 	github.com/stretchr/testify v1.10.0
 )
@@ -81,6 +81,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/contrib/net/http/v2 => ../../net/http
+replace github.com/kakkoyun/dd-trace-go/contrib/net/http/v2 => ../../net/http
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..
