@@ -4,9 +4,9 @@ go 1.22.0
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.5.0
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/denisenkom/go-mssqldb v0.11.0
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/lib/pq v1.10.2
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/stretchr/testify v1.10.0
