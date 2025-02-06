@@ -3,9 +3,9 @@ module github.com/kakkoyun/dd-trace-go/contrib/dimfeld/httptreemux.v5/v2
 go 1.22.0
 
 require (
+	github.com/dimfeld/httptreemux/v5 v5.5.0
 	github.com/kakkoyun/dd-trace-go/contrib/net/http/v2 v2.0.0-rc.2
 	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
-	github.com/dimfeld/httptreemux/v5 v5.5.0
 	github.com/stretchr/testify v1.10.0
 )
 
