@@ -3,8 +3,8 @@ module github.com/kakkoyun/dd-trace-go/contrib/go-pg/pg.v10/v2
 go 1.22.0
 
 require (
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/go-pg/pg/v10 v10.11.1
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 )
 
