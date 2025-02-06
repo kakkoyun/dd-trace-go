@@ -3,8 +3,8 @@ module github.com/kakkoyun/dd-trace-go/contrib/confluentinc/confluent-kafka-go/k
 go 1.22.0
 
 require (
-	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/confluentinc/confluent-kafka-go/v2 v2.4.0
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/goleak v1.3.0
 )
