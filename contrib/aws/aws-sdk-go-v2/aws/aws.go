@@ -26,11 +26,11 @@ import (
 
 	eventBridgeTracer "github.com/kakkoyun/dd-trace-go/v2/contrib/aws/eventbridge"
 	sfnTracer "github.com/kakkoyun/dd-trace-go/v2/contrib/aws/sfn"
+	snsTracer "github.com/kakkoyun/dd-trace-go/v2/contrib/aws/sns"
+	sqsTracer "github.com/kakkoyun/dd-trace-go/v2/contrib/aws/sqs"
 	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
 	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
-	snsTracer "github.com/kakkoyun/dd-trace-go/v2contrib/aws/sns"
-	sqsTracer "github.com/kakkoyun/dd-trace-go/v2contrib/aws/sqs"
 )
 
 const componentName = "aws/aws-sdk-go-v2/aws"
