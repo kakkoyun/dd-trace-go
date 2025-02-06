@@ -26,14 +26,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/internal"
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/namingschema"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
-	"github.com/DataDog/dd-trace-go/v2/internal/traceprof"
-	"github.com/DataDog/dd-trace-go/v2/internal/version"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/namingschema"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/traceprof"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/version"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -417,7 +417,7 @@ func testIntegrationEnabled(t *testing.T, contribPath string) error {
 
 func hasInstrumentationImport(p contribPkg) bool {
 	for _, imp := range p.Imports {
-		if imp == "github.com/DataDog/dd-trace-go/v2/instrumentation" {
+		if imp == "github.com/kakkoyun/dd-trace-go/v2/instrumentation" {
 			return true
 		}
 	}

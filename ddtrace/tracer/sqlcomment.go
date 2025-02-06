@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/samplernames"
 )
 
 // DBMPropagationMode represents the mode of dbm propagation.

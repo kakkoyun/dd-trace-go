@@ -8,9 +8,9 @@ package coverage
 import (
 	"sync"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/utils/net"
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/utils/telemetry"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/utils/net"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/utils/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 // Constants defining the payload size limits for agentless mode.

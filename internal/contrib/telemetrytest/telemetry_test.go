@@ -22,7 +22,7 @@ type contribPkg struct {
 	Dir        string
 }
 
-var InstrumentationImport = "github.com/DataDog/dd-trace-go/v2/instrumentation"
+var InstrumentationImport = "github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 
 func (p *contribPkg) hasInstrumentationImport() bool {
 	for _, imp := range p.Imports {

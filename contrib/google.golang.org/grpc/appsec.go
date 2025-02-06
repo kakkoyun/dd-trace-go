@@ -9,15 +9,15 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/grpcsec"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/grpcsec"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
 )
 
 func applyAction(blockAtomic *atomic.Pointer[actions.BlockGRPC], err *error) bool {

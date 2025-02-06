@@ -8,9 +8,9 @@ package tracer
 import (
 	"context"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/options"
-	"github.com/DataDog/dd-trace-go/v2/internal"
-	"github.com/DataDog/dd-trace-go/v2/internal/orchestrion"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/options"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/orchestrion"
 )
 
 // ContextWithSpan returns a copy of the given context which includes the span s.

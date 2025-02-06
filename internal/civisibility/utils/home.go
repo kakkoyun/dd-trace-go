@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 // This code is based on: https://github.com/mitchellh/go-homedir/blob/v1.1.0/homedir.go (MIT License)

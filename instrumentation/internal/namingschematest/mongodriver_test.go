@@ -18,8 +18,8 @@ import (
 
 	mongotrace "github.com/DataDog/dd-trace-go/contrib/go.mongodb.org/mongo-driver/v2/mongo"
 	"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 var mongoDriverTest = harness.TestCase{

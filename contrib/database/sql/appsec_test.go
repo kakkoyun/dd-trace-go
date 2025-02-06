@@ -15,10 +15,10 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/appsec/events"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/httptracemock"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/testutils"
+	"github.com/kakkoyun/dd-trace-go/v2/appsec/events"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/httptracemock"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/testutils"
 	"github.com/stretchr/testify/require"
 
 	_ "modernc.org/sqlite"

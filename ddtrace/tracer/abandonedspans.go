@@ -14,8 +14,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 var (

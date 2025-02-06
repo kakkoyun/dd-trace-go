@@ -22,9 +22,9 @@ import (
 	"net/http"
 
 	httptrace "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/helper/consts"

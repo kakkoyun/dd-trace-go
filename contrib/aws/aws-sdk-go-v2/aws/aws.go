@@ -24,13 +24,13 @@ import (
 	"github.com/aws/smithy-go/middleware"
 	smithyhttp "github.com/aws/smithy-go/transport/http"
 
-	eventBridgeTracer "github.com/DataDog/dd-trace-go/v2/contrib/aws/eventbridge"
-	sfnTracer "github.com/DataDog/dd-trace-go/v2/contrib/aws/sfn"
-	snsTracer "github.com/DataDog/dd-trace-go/v2/contrib/aws/sns"
-	sqsTracer "github.com/DataDog/dd-trace-go/v2/contrib/aws/sqs"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	eventBridgeTracer "github.com/kakkoyun/dd-trace-go/v2/contrib/aws/eventbridge"
+	sfnTracer "github.com/kakkoyun/dd-trace-go/v2/contrib/aws/sfn"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	snsTracer "github.com/kakkoyun/dd-trace-go/v2contrib/aws/sns"
+	sqsTracer "github.com/kakkoyun/dd-trace-go/v2contrib/aws/sqs"
 )
 
 const componentName = "aws/aws-sdk-go-v2/aws"

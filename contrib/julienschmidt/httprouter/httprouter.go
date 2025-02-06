@@ -9,7 +9,7 @@ package httprouter // import "github.com/DataDog/dd-trace-go/contrib/julienschmi
 import (
 	"net/http"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 
 	"github.com/julienschmidt/httprouter"
 

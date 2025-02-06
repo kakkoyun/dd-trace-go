@@ -26,11 +26,11 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/dyngo"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/waf/addresses"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/trace"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/emitter/waf"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/dyngo"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/waf/addresses"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/trace"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/emitter/waf"
 )
 
 type (

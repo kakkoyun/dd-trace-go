@@ -16,10 +16,10 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	ddtracer "github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/graphqlsec"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	ddtracer "github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/graphqlsec"
 
 	"github.com/graph-gophers/graphql-go/errors"
 	"github.com/graph-gophers/graphql-go/introspection"

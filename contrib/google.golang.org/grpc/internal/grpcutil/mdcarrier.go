@@ -8,7 +8,7 @@ package grpcutil // import "github.com/DataDog/dd-trace-go/contrib/google.golang
 import (
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"google.golang.org/grpc/metadata"
 )

@@ -9,8 +9,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

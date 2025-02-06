@@ -15,7 +15,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/version"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/version"
 )
 
 var (

@@ -11,11 +11,11 @@ import (
 	"math"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/appsec/events"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/sqlsec"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/options"
+	"github.com/kakkoyun/dd-trace-go/v2/appsec/events"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/sqlsec"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/options"
 )
 
 var _ driver.Conn = (*TracedConn)(nil)

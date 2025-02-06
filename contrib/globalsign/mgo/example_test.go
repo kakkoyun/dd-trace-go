@@ -8,7 +8,7 @@ package mgo_test
 import (
 	"log"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	ddmgo "github.com/DataDog/dd-trace-go/contrib/globalsign/mgo/v2"
 )

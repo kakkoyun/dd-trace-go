@@ -7,8 +7,8 @@ package httprouter
 
 import (
 	"github.com/DataDog/dd-trace-go/contrib/julienschmidt/httprouter/v2/internal/tracing"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 type routerConfig struct {

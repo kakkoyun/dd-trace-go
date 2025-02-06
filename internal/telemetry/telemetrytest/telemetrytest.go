@@ -9,7 +9,7 @@ package telemetrytest
 import (
 	"sync"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
 
 	"github.com/stretchr/testify/mock"
 )

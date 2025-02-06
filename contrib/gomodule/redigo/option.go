@@ -8,7 +8,7 @@ package redigo // import "github.com/DataDog/dd-trace-go/contrib/gomodule/redigo
 import (
 	"math"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 type dialConfig struct {

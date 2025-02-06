@@ -14,8 +14,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/datastreams/options"
-	"github.com/DataDog/dd-trace-go/v2/internal/version"
+	"github.com/kakkoyun/dd-trace-go/v2/datastreams/options"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/version"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/DataDog/sketches-go/ddsketch"

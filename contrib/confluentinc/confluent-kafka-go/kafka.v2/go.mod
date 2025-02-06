@@ -3,7 +3,7 @@ module github.com/DataDog/dd-trace-go/contrib/confluentinc/confluent-kafka-go/ka
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/confluentinc/confluent-kafka-go/v2 v2.4.0
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/goleak v1.3.0
@@ -84,4 +84,4 @@ require (
 // Required to avoid a conflict with gin-gonic/gin. Re: https://github.com/gin-gonic/gin/issues/1673
 replace github.com/spf13/viper => github.com/DataDog/viper v1.7.0
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../../..

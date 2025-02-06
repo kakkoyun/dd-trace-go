@@ -5,7 +5,7 @@
 
 package tracing
 
-import "github.com/DataDog/dd-trace-go/v2/instrumentation"
+import "github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 
 type CKGoVersion int32
 

@@ -12,8 +12,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/hostname/cachedfetch"
-	"github.com/DataDog/dd-trace-go/v2/internal/hostname/httputils"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/hostname/cachedfetch"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/hostname/httputils"
 )
 
 // declare these as vars not const to ease testing

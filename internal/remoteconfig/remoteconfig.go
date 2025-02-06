@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 
 	rc "github.com/DataDog/datadog-agent/pkg/remoteconfig/state"
 )

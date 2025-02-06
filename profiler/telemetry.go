@@ -6,7 +6,7 @@
 package profiler
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
 )
 
 // startTelemetry starts the global instrumentation telemetry client with profiler data

@@ -11,8 +11,8 @@ import (
 
 	"github.com/segmentio/kafka-go"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 )
 
 const componentName = "segmentio/kafka-go"

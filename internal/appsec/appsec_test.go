@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/testutils"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/config"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/testutils"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/config"
 
 	waf "github.com/DataDog/go-libddwaf/v3"
 	"github.com/stretchr/testify/assert"

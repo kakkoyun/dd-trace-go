@@ -14,12 +14,12 @@ import (
 	"path"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/dyngo"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/httptrace"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/dyngo"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/httptrace"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

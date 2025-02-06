@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/99designs/gqlgen v0.17.36
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.16
 )
@@ -84,4 +84,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

@@ -8,7 +8,7 @@ package stacktrace
 import (
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
 	"github.com/stretchr/testify/require"
 	"github.com/tinylib/msgp/msgp"
 )

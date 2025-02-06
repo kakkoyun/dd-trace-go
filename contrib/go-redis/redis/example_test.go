@@ -10,8 +10,8 @@ import (
 	"time"
 
 	redistrace "github.com/DataDog/dd-trace-go/contrib/go-redis/redis/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/go-redis/redis"
 )

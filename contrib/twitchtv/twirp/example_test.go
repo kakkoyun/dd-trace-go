@@ -11,7 +11,7 @@ import (
 	"net/http"
 
 	twirptrace "github.com/DataDog/dd-trace-go/contrib/twitchtv/twirp/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/twitchtv/twirp/example"
 )

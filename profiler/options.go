@@ -20,13 +20,13 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/DataDog/dd-trace-go/v2/internal"
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/osinfo"
-	"github.com/DataDog/dd-trace-go/v2/internal/traceprof"
-	"github.com/DataDog/dd-trace-go/v2/internal/version"
-	"github.com/DataDog/dd-trace-go/v2/profiler/internal/immutable"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/osinfo"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/traceprof"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/version"
+	"github.com/kakkoyun/dd-trace-go/v2/profiler/internal/immutable"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 )

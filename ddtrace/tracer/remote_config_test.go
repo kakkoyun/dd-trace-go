@@ -8,12 +8,12 @@ package tracer
 import (
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/remoteconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry/telemetrytest"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/remoteconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/samplernames"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry/telemetrytest"
 
 	"github.com/DataDog/datadog-agent/pkg/remoteconfig/state"
 	"github.com/stretchr/testify/assert"
@@ -307,7 +307,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 				"provenance": "customer",
 				"sample_rate": 1.0,
 				"tags": [{"key": "tag-a", "value_glob": "tv-a??"}]
-			}]}, 
+			}]},
 			"service_target": {"service": "my-service", "env": "my-env"}}`),
 		}
 		applyStatus := tracer.onRemoteConfigUpdate(input)

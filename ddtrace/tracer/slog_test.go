@@ -9,7 +9,7 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 	"github.com/stretchr/testify/require"
 )
 

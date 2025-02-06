@@ -6,7 +6,7 @@
 package sarama
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/IBM/sarama"
 )

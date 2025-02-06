@@ -18,9 +18,9 @@ import (
 
 	"golang.org/x/time/rate"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/samplernames"
 )
 
 // rulesSampler holds instances of trace sampler and single span sampler, that are configured with the given set of rules.

@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/DataDog/dd-trace-go/contrib/net/http/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 	k8s.io/apimachinery v0.25.5
 	k8s.io/client-go v0.25.5
@@ -108,4 +108,4 @@ require (
 
 replace github.com/DataDog/dd-trace-go/contrib/net/http/v2 => ../../net/http
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

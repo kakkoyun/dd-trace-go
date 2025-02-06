@@ -8,9 +8,9 @@ package echo
 import (
 	"net/http"
 
-	"github.com/DataDog/dd-trace-go/v2/appsec/events"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/httpsec"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/trace"
+	"github.com/kakkoyun/dd-trace-go/v2/appsec/events"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/httpsec"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/trace"
 
 	"github.com/labstack/echo/v4"
 )

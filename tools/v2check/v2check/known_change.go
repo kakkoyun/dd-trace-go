@@ -13,7 +13,7 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 	"golang.org/x/tools/go/analysis"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
 )
@@ -115,7 +115,7 @@ func (c V1ImportURL) Fixes() []analysis.SuggestedFix {
 	if path == "" {
 		return nil
 	}
-	path = strings.Replace(path, "gopkg.in/DataDog/dd-trace-go.v1", "github.com/DataDog/dd-trace-go/v2", 1)
+	path = strings.Replace(path, "gopkg.in/DataDog/dd-trace-go.v1", "github.com/kakkoyun/dd-trace-go/v2", 1)
 	return []analysis.SuggestedFix{
 		{
 			Message: "update import URL to v2",

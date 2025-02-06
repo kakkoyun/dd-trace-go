@@ -13,15 +13,15 @@ import (
 	"github.com/DataDog/appsec-internal-go/limiter"
 	wafv3 "github.com/DataDog/go-libddwaf/v3"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/listener"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/listener"
 
-	"github.com/DataDog/dd-trace-go/v2/appsec/events"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/dyngo"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/config"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec/emitter/waf"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/stacktrace"
+	"github.com/kakkoyun/dd-trace-go/v2/appsec/events"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/dyngo"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/waf/actions"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/config"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec/emitter/waf"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/stacktrace"
 )
 
 type Feature struct {

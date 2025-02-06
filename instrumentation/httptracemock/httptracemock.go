@@ -8,11 +8,11 @@ package httptracemock
 import (
 	"net/http"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/appsec/emitter/httpsec"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/httptrace"
-	"github.com/DataDog/dd-trace-go/v2/internal/appsec"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/appsec/emitter/httpsec"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/httptrace"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/appsec"
 )
 
 // ServeMux is an HTTP request multiplexer that traces all the incoming requests.

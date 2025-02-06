@@ -1,9 +1,9 @@
-module github.com/DataDog/dd-trace-go/v2/tools/v2check/_stage
+module github.com/kakkoyun/dd-trace-go/v2/tools/v2check/_stage
 
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	gopkg.in/DataDog/dd-trace-go.v1 v1.70.1
 )
 
@@ -77,4 +77,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2=> ../../..

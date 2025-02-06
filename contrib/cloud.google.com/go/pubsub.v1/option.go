@@ -5,7 +5,7 @@
 
 package pubsub
 
-import "github.com/DataDog/dd-trace-go/v2/instrumentation"
+import "github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 
 // Deprecated: ReceiveOption has been deprecated in favor of Option.
 type ReceiveOption = Option

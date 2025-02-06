@@ -18,8 +18,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/internal"
-	"github.com/DataDog/dd-trace-go/v2/internal/statsdtest"
+	"github.com/kakkoyun/dd-trace-go/v2/internal"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/statsdtest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

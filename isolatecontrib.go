@@ -125,7 +125,7 @@ func generateGoMod(contribDir, dependencyPath string) error {
 
 func goGetV2() error {
 	currentBranch := revParse("HEAD")
-	importPath := fmt.Sprintf("github.com/DataDog/dd-trace-go/v2@%s", currentBranch)
+	importPath := fmt.Sprintf("github.com/kakkoyun/dd-trace-go/v2@%s", currentBranch)
 	cmd := exec.Command("go", "get", "-u", importPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

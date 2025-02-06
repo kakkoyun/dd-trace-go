@@ -7,14 +7,15 @@ package elastic
 
 import (
 	"context"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/testutils"
 	"strings"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/testutils"
+
 	elasticsearch8 "github.com/elastic/go-elasticsearch/v8"
 	esapi8 "github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
 	"github.com/stretchr/testify/assert"
 )
 

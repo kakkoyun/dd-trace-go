@@ -7,7 +7,7 @@
 package sarama // import "github.com/DataDog/dd-trace-go/contrib/IBM/sarama/v2"
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 var instr *instrumentation.Instrumentation

@@ -8,7 +8,7 @@ package internal
 import (
 	"context"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/orchestrion"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/orchestrion"
 )
 
 type executionTracedKey struct{}

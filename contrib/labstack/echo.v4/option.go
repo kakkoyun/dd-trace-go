@@ -10,8 +10,8 @@ import (
 	"math"
 	"os"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/httptrace"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/httptrace"
 
 	"github.com/labstack/echo/v4"
 )

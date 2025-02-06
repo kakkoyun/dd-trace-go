@@ -10,8 +10,8 @@ package http // import "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
 import (
 	"net/http"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation/httptrace"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation/httptrace"
 )
 
 const componentName = instrumentation.PackageNetHTTP

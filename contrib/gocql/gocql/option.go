@@ -11,7 +11,7 @@ import (
 
 	"golang.org/x/mod/semver"
 
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 type queryConfig struct {

@@ -9,7 +9,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"

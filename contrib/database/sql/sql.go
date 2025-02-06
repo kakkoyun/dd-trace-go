@@ -25,7 +25,7 @@ import (
 	"time"
 
 	sqlinternal "github.com/DataDog/dd-trace-go/contrib/database/sql/v2/internal"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 const componentName = instrumentation.PackageDatabaseSQL

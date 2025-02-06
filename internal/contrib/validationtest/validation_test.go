@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	validationtest "github.com/DataDog/dd-trace-go/v2/internal/contrib/validationtest/contrib"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	validationtest "github.com/kakkoyun/dd-trace-go/v2/internal/contrib/validationtest/contrib"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

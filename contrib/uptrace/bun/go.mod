@@ -3,7 +3,7 @@ module github.com/DataDog/dd-trace-go/contrib/uptrace/bun/v2
 go 1.22.0
 
 require (
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/lib/pq v1.10.2
 	github.com/microsoft/go-mssqldb v0.21.0
@@ -107,4 +107,4 @@ require (
 	modernc.org/token v1.1.0 // indirect
 )
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

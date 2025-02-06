@@ -14,10 +14,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
-	"github.com/DataDog/dd-trace-go/v2/internal/remoteconfig"
-	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/globalconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/remoteconfig"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
 
 	"github.com/DataDog/datadog-agent/pkg/remoteconfig/state"
 )

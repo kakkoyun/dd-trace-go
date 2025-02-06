@@ -8,9 +8,9 @@ package kafka
 import (
 	"context"
 
-	"github.com/DataDog/dd-trace-go/v2/datastreams"
-	"github.com/DataDog/dd-trace-go/v2/datastreams/options"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/datastreams"
+	"github.com/kakkoyun/dd-trace-go/v2/datastreams/options"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 )
 
 func (tr *Tracer) SetConsumeDSMCheckpoint(msg Message) {

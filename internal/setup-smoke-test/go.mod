@@ -1,10 +1,10 @@
-module github.com/DataDog/dd-trace-go/v2/internal/setup-smoke-test
+module github.com/kakkoyun/dd-trace-go/v2/internal/setup-smoke-test
 
 go 1.22.0
 
 require (
 	github.com/DataDog/dd-trace-go/contrib/net/http/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 )
 
 require (
@@ -82,4 +82,4 @@ require (
 
 replace github.com/DataDog/dd-trace-go/contrib/net/http/v2 => ../../contrib/net/http
 
-replace github.com/DataDog/dd-trace-go/v2 => ../..
+replace github.com/kakkoyun/dd-trace-go/v2=> ../..

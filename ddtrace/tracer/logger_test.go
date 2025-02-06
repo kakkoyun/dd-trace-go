@@ -6,8 +6,8 @@
 package tracer_test
 
 import (
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

@@ -21,8 +21,8 @@ import (
 
 	awstrace "github.com/DataDog/dd-trace-go/contrib/aws/aws-sdk-go-v2/v2/aws"
 	"github.com/DataDog/dd-trace-go/instrumentation/internal/namingschematest/v2/harness"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/instrumentation"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/instrumentation"
 )
 
 func awsSDKV2Config(t *testing.T, opts ...awstrace.Option) aws.Config {

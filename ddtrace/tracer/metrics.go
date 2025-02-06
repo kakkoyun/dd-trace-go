@@ -12,8 +12,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/internal/tracerstats"
-	"github.com/DataDog/dd-trace-go/v2/internal/log"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/internal/tracerstats"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/log"
 )
 
 // defaultMetricsReportInterval specifies the interval at which runtime metrics will

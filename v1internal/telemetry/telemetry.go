@@ -8,7 +8,7 @@
 // This package is not intended for use by external consumers, no API stability is guaranteed.
 package telemetry
 
-import "github.com/DataDog/dd-trace-go/v2/internal/telemetry"
+import "github.com/kakkoyun/dd-trace-go/v2/internal/telemetry"
 
 // Namespace describes an APM product to distinguish telemetry coming from
 // different products used by the same application

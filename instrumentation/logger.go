@@ -5,7 +5,7 @@
 
 package instrumentation
 
-import "github.com/DataDog/dd-trace-go/v2/internal/log"
+import "github.com/kakkoyun/dd-trace-go/v2/internal/log"
 
 type Logger interface {
 	Debug(msg string, args ...any)

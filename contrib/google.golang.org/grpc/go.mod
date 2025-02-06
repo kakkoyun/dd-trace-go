@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/DataDog/dd-trace-go/instrumentation/testutils/grpc/v2 v2.0.0-rc.2
-	github.com/DataDog/dd-trace-go/v2 v2.0.0-rc.2
+	github.com/kakkoyun/dd-trace-go/v2 v2.0.0-rc.2
 	github.com/stretchr/testify v1.10.0
 	github.com/tinylib/msgp v1.2.2
 	google.golang.org/grpc v1.69.0
@@ -82,4 +82,4 @@ require (
 
 replace github.com/DataDog/dd-trace-go/instrumentation/testutils/grpc/v2 => ../../../instrumentation/testutils/grpc
 
-replace github.com/DataDog/dd-trace-go/v2 => ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

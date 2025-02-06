@@ -11,9 +11,9 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/constants"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/ext"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/mocktracer"
+	"github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/constants"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -186,7 +186,7 @@ func assertTest(t *testing.T) {
 		// Assert Module
 		if span.Tag(ext.SpanType) == constants.SpanTypeTestModule {
 			assert.Subset(spanTags, map[string]interface{}{
-				constants.TestModule:    "github.com/DataDog/dd-trace-go/v2/internal/civisibility/integrations/gotesting",
+				constants.TestModule:    "github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/integrations/gotesting",
 				constants.TestFramework: "golang.org/pkg/testing",
 			})
 			assert.Contains(spanTags, constants.TestSessionIDTag)
@@ -199,7 +199,7 @@ func assertTest(t *testing.T) {
 		// Assert Suite
 		if span.Tag(ext.SpanType) == constants.SpanTypeTestSuite {
 			assert.Subset(spanTags, map[string]interface{}{
-				constants.TestModule:    "github.com/DataDog/dd-trace-go/v2/internal/civisibility/integrations/gotesting",
+				constants.TestModule:    "github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/integrations/gotesting",
 				constants.TestFramework: "golang.org/pkg/testing",
 			})
 			assert.Contains(spanTags, constants.TestSessionIDTag)
@@ -214,7 +214,7 @@ func assertTest(t *testing.T) {
 		// Assert Test
 		if span.Tag(ext.SpanType) == constants.SpanTypeTest {
 			assert.Subset(spanTags, map[string]interface{}{
-				constants.TestModule:    "github.com/DataDog/dd-trace-go/v2/internal/civisibility/integrations/gotesting",
+				constants.TestModule:    "github.com/kakkoyun/dd-trace-go/v2/internal/civisibility/integrations/gotesting",
 				constants.TestFramework: "golang.org/pkg/testing",
 				constants.TestSuite:     "testing_test.go",
 				constants.TestName:      t.Name(),

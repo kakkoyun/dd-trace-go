@@ -10,7 +10,7 @@ import (
 	"database/sql"
 
 	buntrace "github.com/DataDog/dd-trace-go/contrib/uptrace/bun/v2"
-	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
+	"github.com/kakkoyun/dd-trace-go/v2/ddtrace/tracer"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 	_ "modernc.org/sqlite"
