@@ -89,4 +89,4 @@ replace github.com/DataDog/dd-trace-go/contrib/bradfitz/gomemcache/v2 => ../../.
 
 replace github.com/DataDog/dd-trace-go/contrib/miekg/dns/v2 => ../../../contrib/miekg/dns
 
-replace github.com/kakkoyun/dd-trace-go/v2=> ../../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../../..

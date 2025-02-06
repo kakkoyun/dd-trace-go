@@ -78,4 +78,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/kakkoyun/dd-trace-go/v2=> ../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../..

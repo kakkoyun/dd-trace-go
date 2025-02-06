@@ -82,4 +82,4 @@ require (
 
 replace github.com/DataDog/dd-trace-go/contrib/net/http/v2 => ../../contrib/net/http
 
-replace github.com/kakkoyun/dd-trace-go/v2=> ../..
+replace github.com/kakkoyun/dd-trace-go/v2 => ../..
