@@ -670,10 +670,11 @@ func (t *tracer) StartSpan(operationName string, options ...ddtrace.StartSpanOpt
 			log.Error("Abandoned spans channel full, disregarding span.")
 		}
 	}
-	v, ok := t.spansStarted.Load(span.integration)
-	if !ok {
-		v, _ = t.spansStarted.LoadOrStore(span.integration, new(atomic.Int64))
-	}
+	// LoadOrStore returns the existing value for the key if present.
+	// Otherwise, it stores and returns the given value.
+	// So, it doesn't matter if the value was already there or freshly stored,
+	// we just want to increment it.
+	v, _ := t.spansStarted.LoadOrStore(span.integration, new(atomic.Int64))
 	v.Add(1)
 	return span
 }
