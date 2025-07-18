@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
+	"github.com/DataDog/dd-trace-go/v2/internal/locking"
 	"github.com/DataDog/dd-trace-go/v2/internal/samplernames"
 )
 
@@ -54,7 +55,8 @@ func (s *customSampler) Sample(span *Span) bool {
 
 // rateSampler samples from a sample rate.
 type rateSampler struct {
-	sync.RWMutex
+	mu locking.RWMutex
+	// +checklocks:mu
 	rate float64
 }
 
@@ -74,33 +76,34 @@ func NewRateSampler(rate float64) RateSampler {
 
 // Rate returns the current rate of the sampler.
 func (r *rateSampler) Rate() float64 {
-	r.RLock()
-	defer r.RUnlock()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	return r.rate
 }
 
 // SetRate sets a new sampling rate.
 func (r *rateSampler) SetRate(rate float64) {
-	r.Lock()
+	r.mu.Lock()
 	r.rate = rate
-	r.Unlock()
+	r.mu.Unlock()
 }
 
 // constants used for the Knuth hashing, same as agent.
 const knuthFactor = uint64(1111111111111111111)
 
 // Sample returns true if the given span should be sampled.
-func (r *rateSampler) Sample(s *Span) bool {
+func (r *rateSampler) Sample(span *Span) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
 	if r.rate == 1 {
 		// fast path
 		return true
 	}
-	if r.rate == 0 || s == nil {
+	if r.rate == 0 || span == nil {
 		return false
 	}
-	r.RLock()
-	defer r.RUnlock()
-	return sampledByRate(s.traceID, r.rate)
+	return sampledByRate(span.getTraceID(), r.rate)
 }
 
 // sampledByRate verifies if the number n should be sampled at the specified
@@ -119,8 +122,11 @@ func sampledByRate(n uint64, rate float64) bool {
 // prioritySampler holds a set of per-service sampling rates and applies
 // them to spans.
 type prioritySampler struct {
-	mu          sync.RWMutex
-	rates       map[string]float64
+	mu sync.RWMutex
+
+	// +checklocks:mu
+	rates map[string]float64
+	// +checklocks:mu
 	defaultRate float64
 }
 
@@ -151,10 +157,10 @@ func (ps *prioritySampler) readRatesJSON(rc io.ReadCloser) error {
 	return nil
 }
 
-// getRate returns the sampling rate to be used for the given span. Callers must
-// guard the span.
-func (ps *prioritySampler) getRate(spn *Span) float64 {
-	key := "service:" + spn.service + ",env:" + spn.meta[ext.Environment]
+// getRate returns the sampling rate to be used for the given span.
+func (ps *prioritySampler) getRate(s readOnlySpan) float64 {
+	// TODO(kakkoyun): Add samplingRateKey.
+	key := "service:" + s.getService() + ",env:" + s.fetchMetadatum(ext.Environment)
 	ps.mu.RLock()
 	defer ps.mu.RUnlock()
 	if rate, ok := ps.rates[key]; ok {
@@ -165,12 +171,12 @@ func (ps *prioritySampler) getRate(spn *Span) float64 {
 
 // apply applies sampling priority to the given span. Caller must ensure it is safe
 // to modify the span.
-func (ps *prioritySampler) apply(spn *Span) {
-	rate := ps.getRate(spn)
-	if sampledByRate(spn.traceID, rate) {
-		spn.setSamplingPriority(ext.PriorityAutoKeep, samplernames.AgentRate)
+func (ps *prioritySampler) apply(s recordingSpan) {
+	rate := ps.getRate(s)
+	if sampledByRate(s.getTraceID(), rate) {
+		s.setSamplingPriority(ext.PriorityAutoKeep, samplernames.AgentRate)
 	} else {
-		spn.setSamplingPriority(ext.PriorityAutoReject, samplernames.AgentRate)
+		s.setSamplingPriority(ext.PriorityAutoReject, samplernames.AgentRate)
 	}
-	spn.SetTag(keySamplingPriorityRate, rate)
+	s.setMetric(keySamplingPriorityRate, rate)
 }

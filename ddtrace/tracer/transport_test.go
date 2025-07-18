@@ -46,17 +46,29 @@ func getTestSpan() *Span {
 
 // getTestTrace returns a list of traces that is composed by “traceN“ number
 // of traces, each one composed by “size“ number of spans.
-func getTestTrace(traceN, size int) [][]*Span {
-	var traces [][]*Span
+func getTestTrace(traceN, size int) [][]recordingSpan {
+	var traces [][]recordingSpan
 
 	for i := 0; i < traceN; i++ {
-		trace := []*Span{}
+		trace := []recordingSpan{}
 		for j := 0; j < size; j++ {
 			trace = append(trace, getTestSpan())
 		}
 		traces = append(traces, trace)
 	}
 	return traces
+}
+
+func convertToSnapshotList(traces [][]recordingSpan) serializableTraceList {
+	ss := serializableTraceList{}
+	for _, trace := range traces {
+		s := serializableTrace{}
+		for _, span := range trace {
+			s = append(s, span.snapshot())
+		}
+		ss = append(ss, s)
+	}
+	return ss
 }
 
 func TestTracesAgentIntegration(t *testing.T) {
@@ -66,7 +78,7 @@ func TestTracesAgentIntegration(t *testing.T) {
 	assert := assert.New(t)
 
 	testCases := []struct {
-		payload [][]*Span
+		payload [][]recordingSpan
 	}{
 		{getTestTrace(1, 1)},
 		{getTestTrace(10, 1)},
@@ -76,7 +88,7 @@ func TestTracesAgentIntegration(t *testing.T) {
 
 	for _, tc := range testCases {
 		transport := newHTTPTransport(defaultURL, defaultHTTPClient(0))
-		p, err := encode(tc.payload)
+		p, err := encode(convertToSnapshotList(tc.payload))
 		assert.NoError(err)
 		_, err = transport.send(p)
 		assert.NoError(err)
@@ -170,11 +182,11 @@ func TestTraceCountHeader(t *testing.T) {
 	assert := assert.New(t)
 
 	testCases := []struct {
-		payload [][]*Span
+		payload [][]recordingSpan
 	}{
 		{getTestTrace(1, 1)},
-		{getTestTrace(10, 1)},
-		{getTestTrace(100, 10)},
+		{getTestTrace(10, 10)},
+		{getTestTrace(100, 100)},
 	}
 
 	var hits int
@@ -192,7 +204,7 @@ func TestTraceCountHeader(t *testing.T) {
 	defer srv.Close()
 	for _, tc := range testCases {
 		transport := newHTTPTransport(srv.URL, defaultHTTPClient(0))
-		p, err := encode(tc.payload)
+		p, err := encode(convertToSnapshotList(tc.payload))
 		assert.NoError(err)
 		_, err = transport.send(p)
 		assert.NoError(err)
@@ -234,7 +246,7 @@ func TestCustomTransport(t *testing.T) {
 	c := &http.Client{}
 	crt := wrapRecordingRoundTripper(c)
 	transport := newHTTPTransport(srv.URL, c)
-	p, err := encode(getTestTrace(1, 1))
+	p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 	assert.NoError(err)
 	_, err = transport.send(p)
 	assert.NoError(err)
@@ -274,7 +286,7 @@ func TestApiErrorsMetric(t *testing.T) {
 		setGlobalTracer(trc)
 		defer trc.Stop()
 
-		p, err := encode(getTestTrace(1, 1))
+		p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 		assert.NoError(err)
 
 		// We're expecting an error
@@ -297,7 +309,7 @@ func TestApiErrorsMetric(t *testing.T) {
 		setGlobalTracer(trc)
 		defer trc.Stop()
 
-		p, err := encode(getTestTrace(1, 1))
+		p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 		assert.NoError(err)
 
 		_, err = trc.config.transport.send(p)
@@ -319,7 +331,7 @@ func TestApiErrorsMetric(t *testing.T) {
 		setGlobalTracer(trc)
 		defer trc.Stop()
 
-		p, err := encode(getTestTrace(1, 1))
+		p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 		assert.NoError(err)
 
 		_, err = trc.config.transport.send(p)
@@ -354,7 +366,7 @@ func TestWithHTTPClient(t *testing.T) {
 	defer trc.Stop()
 	assert.NoError(err)
 
-	p, err := encode(getTestTrace(1, 1))
+	p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 	assert.NoError(err)
 	_, err = trc.config.transport.send(p)
 	assert.NoError(err)
@@ -392,7 +404,7 @@ func TestWithUDS(t *testing.T) {
 	defer trc.Stop()
 	assert.NoError(err)
 
-	p, err := encode(getTestTrace(1, 1))
+	p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 	assert.NoError(err)
 	_, err = trc.config.transport.send(p)
 	assert.NoError(err)
@@ -424,7 +436,7 @@ func TestExternalEnvironment(t *testing.T) {
 	assert.NoError(err)
 	defer trc.Stop()
 
-	p, err := encode(getTestTrace(1, 1))
+	p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 	assert.NoError(err)
 	_, err = trc.config.transport.send(p)
 	assert.NoError(err)
@@ -453,7 +465,7 @@ func TestDefaultHeaders(t *testing.T) {
 	defer trc.Stop()
 
 	// Test traces endpoint
-	p, err := encode(getTestTrace(1, 1))
+	p, err := encode(convertToSnapshotList(getTestTrace(1, 1)))
 	assert.NoError(err)
 	_, err = trc.config.transport.send(p)
 	assert.NoError(err)

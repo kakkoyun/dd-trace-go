@@ -2,7 +2,8 @@
 
 set -e
 
-CHECKLOCKS_PACKAGE="${CHECKLOCKS_PACKAGE:-gvisor.dev/gvisor/tools/checklocks/cmd/checklocks@go}"
+# Use the forked checklocks as specified in _tools/tools.go
+CHECKLOCKS_PACKAGE="${CHECKLOCKS_PACKAGE:-github.com/kakkoyun/checklocks/cmd/checklocks}"
 CHECKLOCKS_BIN="${CHECKLOCKS_BIN:-}"
 IGNORE_ERRORS=false
 TARGET_DIR="./ddtrace/tracer"
@@ -41,8 +42,9 @@ if [ -n "$CHECKLOCKS_BIN" ]; then
 		fi
 		exit 1
 	fi
-else # Check if checklocks tool exists in standard location, install if not
-	CHECKLOCKS_PATH="$HOME/go/bin/checklocks"
+else
+	# Use the checklocks tool from standard location
+	CHECKLOCKS_PATH="$(go env GOPATH)/bin/checklocks"
 	if [ ! -f "$CHECKLOCKS_PATH" ]; then
 		echo "Installing checklocks tool from $CHECKLOCKS_PACKAGE..."
 		pushd /tmp

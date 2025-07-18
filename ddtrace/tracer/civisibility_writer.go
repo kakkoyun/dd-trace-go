@@ -60,16 +60,13 @@ func newCiVisibilityTraceWriter(c *config) *ciVisibilityTraceWriter {
 // Parameters:
 //
 //	trace - A slice of spans representing the trace to be added.
-func (w *ciVisibilityTraceWriter) add(trace []*Span) {
+func (w *ciVisibilityTraceWriter) add(trace serializableTrace) {
 	telemetry.EventsEnqueueForSerialization()
-	for _, s := range trace {
-		cvEvent := getCiVisibilityEvent(s)
-		if err := w.payload.push(cvEvent); err != nil {
-			log.Error("ciVisibilityTraceWriter: Error encoding msgpack: %s", err.Error())
-		}
-		if w.payload.size() > agentlessPayloadSizeLimit {
-			w.flush()
-		}
+	if err := w.payload.push(trace); err != nil {
+		log.Error("ciVisibilityTraceWriter: Error encoding msgpack: %v", err.Error())
+	}
+	if w.payload.size() > agentlessPayloadSizeLimit {
+		w.flush()
 	}
 }
 

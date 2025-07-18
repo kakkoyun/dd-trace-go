@@ -19,12 +19,13 @@ import (
 
 var fixedTime = now()
 
-func newSpanList(n int) spanList {
+func newSpanList(n int) serializableTrace {
 	itoa := map[int]string{0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
-	list := make([]*Span, n)
+	list := make([]spanSnapshot, n)
 	for i := 0; i < n; i++ {
-		list[i] = newBasicSpan("span.list." + itoa[i%5+1])
-		list[i].start = fixedTime
+		span := newBasicSpan("span.list." + itoa[i%5+1])
+		span.setStartTime(fixedTime)
+		list[i] = span.snapshot()
 	}
 	return list
 }
@@ -38,7 +39,7 @@ func TestPayloadIntegrity(t *testing.T) {
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
 			assert := assert.New(t)
 			p := newPayload()
-			lists := make(spanLists, n)
+			lists := make(serializableTraceList, n)
 			for i := 0; i < n; i++ {
 				list := newSpanList(i%5 + 1)
 				lists[i] = list
@@ -67,7 +68,7 @@ func TestPayloadDecode(t *testing.T) {
 			for i := 0; i < n; i++ {
 				p.push(newSpanList(i%5 + 1))
 			}
-			var got spanLists
+			var got serializableTraceList
 			err := msgp.Decode(p, &got)
 			assert.NoError(err)
 		})
@@ -87,10 +88,10 @@ func benchmarkPayloadThroughput(count int) func(*testing.B) {
 	return func(b *testing.B) {
 		p := newPayload()
 		s := newBasicSpan("X")
-		s.meta["key"] = strings.Repeat("X", 10*1024)
-		trace := make(spanList, count)
+		s.setMetadatum("key", strings.Repeat("X", 10*1024))
+		trace := make(serializableTrace, count)
 		for i := 0; i < count; i++ {
-			trace[i] = s
+			trace[i] = s.snapshot()
 		}
 		b.ReportAllocs()
 		b.ResetTimer()

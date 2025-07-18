@@ -38,7 +38,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
 
 		// Apply RC. Assert _dd.rule_psr shows the RC sampling rate (0.5) is applied
 		input := remoteconfig.ProductUpdate{
@@ -50,7 +50,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s := tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.5, s.metrics[keyRulesSamplerAppliedRate])
+		require.Equal(t, 0.5, s.fetchMetric(keyRulesSamplerAppliedRate))
 
 		// Telemetry
 		assert.Contains(t, telemetryClient.Configuration, telemetry.Configuration{Name: "trace_sample_rate", Value: 0.5, Origin: telemetry.OriginRemoteConfig})
@@ -71,14 +71,14 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 1.0, s.metrics[keyRulesSamplerAppliedRate])
-		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 1.0, s.fetchMetric(keyRulesSamplerAppliedRate))
+		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.Context().trace.propagatingTag(keyDecisionMaker))
 		// Spans not matching the rule still gets the global rate
 		s = tracer.StartSpan("not.web.request")
 		s.Finish()
-		require.Equal(t, 0.5, s.metrics[keyRulesSamplerAppliedRate])
-		if p, ok := s.context.trace.samplingPriority(); ok && p > 0 {
-			require.Equal(t, samplerToDM(samplernames.RuleRate), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 0.5, s.fetchMetric(keyRulesSamplerAppliedRate))
+		if p, ok := s.Context().trace.samplingPriority(); ok && p > 0 {
+			require.Equal(t, samplerToDM(samplernames.RuleRate), s.Context().trace.propagatingTag(keyDecisionMaker))
 		}
 
 		// Unset RC. Assert _dd.rule_psr is not set
@@ -89,7 +89,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
 		s.Finish()
-		require.NotContains(t, keyRulesSamplerAppliedRate, s.metrics)
+		require.NotContains(t, s.getMetrics(), keyRulesSamplerAppliedRate)
 
 		// assert telemetry config contains trace_sample_rate with Nan (marshalled as nil)
 		assert.Contains(t, telemetryClient.Configuration, telemetry.Configuration{Name: "trace_sample_rate", Value: nil, Origin: telemetry.OriginDefault})
@@ -104,7 +104,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginEnvVar, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginEnvVar, tracer.config.traceSampleRate.getOrigin())
 
 		// Apply RC. Assert _dd.rule_psr shows the RC sampling rate (0.2) is applied
 		input := remoteconfig.ProductUpdate{
@@ -116,7 +116,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s := tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.2, s.metrics[keyRulesSamplerAppliedRate])
+		require.Equal(t, 0.2, s.fetchMetric(keyRulesSamplerAppliedRate))
 
 		assert.Contains(t, telemetryClient.Configuration, telemetry.Configuration{Name: "trace_sample_rate", Value: 0.2, Origin: telemetry.OriginRemoteConfig})
 
@@ -128,7 +128,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.1, s.metrics[keyRulesSamplerAppliedRate])
+		require.Equal(t, 0.1, s.fetchMetric(keyRulesSamplerAppliedRate))
 
 		assert.Contains(t, telemetryClient.Configuration, telemetry.Configuration{Name: "trace_sample_rate", Value: 0.1, Origin: telemetry.OriginDefault})
 	})
@@ -147,13 +147,13 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
 
 		s := tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.1, s.metrics[keyRulesSamplerAppliedRate])
-		if p, ok := s.context.trace.samplingPriority(); ok && p > 0 {
-			require.Equal(t, samplerToDM(samplernames.RuleRate), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 0.1, s.fetchMetric(keyRulesSamplerAppliedRate))
+		if p, ok := s.Context().trace.samplingPriority(); ok && p > 0 {
+			require.Equal(t, samplerToDM(samplernames.RuleRate), s.Context().trace.propagatingTag(keyDecisionMaker))
 		}
 
 		input := remoteconfig.ProductUpdate{
@@ -170,17 +170,17 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		applyStatus := tracer.onRemoteConfigUpdate(input)
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
-		s.resource = "abc"
+		s.setResource("abc")
 		s.Finish()
-		require.Equal(t, 1.0, s.metrics[keyRulesSamplerAppliedRate])
-		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 1.0, s.fetchMetric(keyRulesSamplerAppliedRate))
+		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.Context().trace.propagatingTag(keyDecisionMaker))
 		// Spans not matching the rule gets the global rate, but not the local rule, which is no longer in effect
 		s = tracer.StartSpan("web.request")
-		s.resource = "not_abc"
+		s.setResource("not_abc")
 		s.Finish()
-		require.Equal(t, 0.5, s.metrics[keyRulesSamplerAppliedRate])
-		if p, ok := s.context.trace.samplingPriority(); ok && p > 0 {
-			require.Equal(t, samplerToDM(samplernames.RuleRate), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 0.5, s.fetchMetric(keyRulesSamplerAppliedRate))
+		if p, ok := s.Context().trace.samplingPriority(); ok && p > 0 {
+			require.Equal(t, samplerToDM(samplernames.RuleRate), s.Context().trace.propagatingTag(keyDecisionMaker))
 		}
 
 		assert.Contains(t, telemetryClient.Configuration, telemetry.Configuration{Name: "trace_sample_rate", Value: 0.5, Origin: telemetry.OriginRemoteConfig})
@@ -208,9 +208,9 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 
 		s := tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.1, s.metrics[keyRulesSamplerAppliedRate])
-		if p, ok := s.context.trace.samplingPriority(); ok && p > 0 {
-			require.Equal(t, samplerToDM(samplernames.RuleRate), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 0.1, s.fetchMetric(keyRulesSamplerAppliedRate))
+		if p, ok := s.Context().trace.samplingPriority(); ok && p > 0 {
+			require.Equal(t, samplerToDM(samplernames.RuleRate), s.Context().trace.propagatingTag(keyDecisionMaker))
 		}
 
 		input := remoteconfig.ProductUpdate{
@@ -234,20 +234,20 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		applyStatus := tracer.onRemoteConfigUpdate(input)
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
-		s.resource = "abc"
+		s.setResource("abc")
 		s.Finish()
-		require.Equal(t, 1.0, s.metrics[keyRulesSamplerAppliedRate])
-		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 1.0, s.fetchMetric(keyRulesSamplerAppliedRate))
+		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.Context().trace.propagatingTag(keyDecisionMaker))
 		// Spans not matching the rule gets the global rate, but not the local rule, which is no longer in effect
 		s = tracer.StartSpan("web.request")
-		s.resource = "not_abc"
+		s.setResource("not_abc")
 		s.Finish()
-		require.Equal(t, 0.3, s.metrics[keyRulesSamplerAppliedRate])
-		if p, ok := s.context.trace.samplingPriority(); ok && p > 0 {
+		require.Equal(t, 0.3, s.fetchMetric(keyRulesSamplerAppliedRate))
+		if p, ok := s.Context().trace.samplingPriority(); ok && p > 0 {
 			require.Equal(
 				t,
 				samplerToDM(samplernames.RemoteDynamicRule),
-				s.context.trace.propagatingTags[keyDecisionMaker],
+				s.Context().trace.propagatingTag(keyDecisionMaker),
 			)
 		}
 
@@ -256,11 +256,11 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		applyStatus = tracer.onRemoteConfigUpdate(input)
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
-		s.resource = "not_abc"
+		s.setResource("not_abc")
 		s.Finish()
-		require.Equal(t, 0.1, s.metrics[keyRulesSamplerAppliedRate])
-		if p, ok := s.context.trace.samplingPriority(); ok && p > 0 {
-			require.Equal(t, samplerToDM(samplernames.RuleRate), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 0.1, s.fetchMetric(keyRulesSamplerAppliedRate))
+		if p, ok := s.Context().trace.samplingPriority(); ok && p > 0 {
+			require.Equal(t, samplerToDM(samplernames.RuleRate), s.Context().trace.propagatingTag(keyDecisionMaker))
 		}
 
 		assertCalled(t, telemetryClient, []telemetry.Configuration{
@@ -304,14 +304,14 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		s := tracer.StartSpan("web.request")
 		s.SetTag("tag-a", "tv-a11")
 		s.Finish()
-		require.Equal(t, 1.0, s.metrics[keyRulesSamplerAppliedRate])
-		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.context.trace.propagatingTags[keyDecisionMaker])
+		require.Equal(t, 1.0, s.fetchMetric(keyRulesSamplerAppliedRate))
+		require.Equal(t, samplerToDM(samplernames.RemoteUserRule), s.Context().trace.propagatingTag(keyDecisionMaker))
 
 		// A span with non-matching tags gets the global rate
 		s = tracer.StartSpan("web.request")
 		s.SetTag("tag-a", "not-matching")
 		s.Finish()
-		require.Equal(t, 0.5, s.metrics[keyRulesSamplerAppliedRate])
+		require.Equal(t, 0.5, s.fetchMetric(keyRulesSamplerAppliedRate))
 
 		assertCalled(t, telemetryClient, []telemetry.Configuration{
 			{Name: "trace_sample_rate", Value: 0.5, Origin: telemetry.OriginRemoteConfig},
@@ -332,7 +332,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
 
 		// Apply RC. Assert global config shows the RC header tag is applied
 		input := remoteconfig.ProductUpdate{
@@ -371,7 +371,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tr.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tr.config.traceSampleRate.getOrigin())
 
 		input := remoteconfig.ProductUpdate{
 			"path": []byte(
@@ -383,7 +383,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, true, ok)
 		applyStatus := tr.onRemoteConfigUpdate(input)
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
-		require.Equal(t, false, tr.config.enabled.current)
+		require.Equal(t, false, tr.config.enabled.get())
 		headers := TextMapCarrier{
 			traceparentHeader:      "00-12345678901234567890123456789012-1234567890123456-01",
 			tracestateHeader:       "dd=s:2;o:rum;t.usr.id:baz64~~",
@@ -405,7 +405,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		input = remoteconfig.ProductUpdate{"path": nil}
 		applyStatus = tr.onRemoteConfigUpdate(input)
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
-		require.Equal(t, false, tr.config.enabled.current)
+		require.Equal(t, false, tr.config.enabled.get())
 
 		// turning tracing back explicitly is not allowed
 		input = remoteconfig.ProductUpdate{
@@ -415,7 +415,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		}
 		applyStatus = tr.onRemoteConfigUpdate(input)
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
-		require.Equal(t, false, tr.config.enabled.current)
+		require.Equal(t, false, tr.config.enabled.get())
 	})
 
 	t.Run(
@@ -526,7 +526,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
 
 		input := remoteconfig.ProductUpdate{
 			"path": []byte(
@@ -551,7 +551,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
 
 		input := remoteconfig.ProductUpdate{
 			"path": []byte(`{"lib_config": {}, "service_target": {"service": "other-service", "env": "my-env"}}`),
@@ -574,7 +574,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
 
 		input := remoteconfig.ProductUpdate{
 			"path": []byte(`{"lib_config": {}, "service_target": {"service": "my-service", "env": "other-env"}}`),
@@ -603,8 +603,8 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.cfgOrigin)
-		require.Equal(t, telemetry.OriginEnvVar, tracer.config.globalTags.cfgOrigin)
+		require.Equal(t, telemetry.OriginDefault, tracer.config.traceSampleRate.getOrigin())
+		require.Equal(t, telemetry.OriginEnvVar, tracer.config.globalTags.getOrigin())
 
 		// Apply RC. Assert global tags have the RC tags key3:val3,key4:val4 applied + runtime ID
 		input := remoteconfig.ProductUpdate{
@@ -616,12 +616,12 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s := tracer.StartSpan("web.request")
 		s.Finish()
-		require.NotContains(t, "key0", s.meta)
-		require.NotContains(t, "key1", s.meta)
-		require.NotContains(t, "key2", s.meta)
-		require.Equal(t, "val3", s.meta["key3"])
-		require.Equal(t, "val4", s.meta["key4"])
-		require.Equal(t, globalconfig.RuntimeID(), s.meta[ext.RuntimeID])
+		require.NotContains(t, s.getMetadata(), "key0")
+		require.NotContains(t, s.getMetadata(), "key1")
+		require.NotContains(t, s.getMetadata(), "key2")
+		require.Equal(t, "val3", s.fetchMetadatum("key3"))
+		require.Equal(t, "val4", s.fetchMetadatum("key4"))
+		require.Equal(t, globalconfig.RuntimeID(), s.fetchMetadatum(ext.RuntimeID))
 		runtimeIDTag := ext.RuntimeID + ":" + globalconfig.RuntimeID()
 
 		// Telemetry
@@ -638,12 +638,12 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, "val0", s.meta["key0"])
-		require.Equal(t, "val1", s.meta["key1"])
-		require.Equal(t, "val2", s.meta["key2"])
-		require.NotContains(t, "key3", s.meta)
-		require.NotContains(t, "key4", s.meta)
-		require.Equal(t, globalconfig.RuntimeID(), s.meta[ext.RuntimeID])
+		require.Equal(t, "val0", s.fetchMetadatum("key0"))
+		require.Equal(t, "val1", s.fetchMetadatum("key1"))
+		require.Equal(t, "val2", s.fetchMetadatum("key2"))
+		require.NotContains(t, s.getMetadata(), "key3")
+		require.NotContains(t, s.getMetadata(), "key4")
+		require.Equal(t, globalconfig.RuntimeID(), s.fetchMetadatum(ext.RuntimeID))
 
 		// Telemetry
 		assertCalled(t, telemetryClient, []telemetry.Configuration{
@@ -664,7 +664,7 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		assert.Nil(t, err)
 		defer stop()
 
-		require.Equal(t, telemetry.OriginEnvVar, tracer.config.traceSampleRate.cfgOrigin)
+		require.Equal(t, telemetry.OriginEnvVar, tracer.config.traceSampleRate.getOrigin())
 
 		// Apply RC. Assert configuration is updated to the RC values.
 		input := remoteconfig.ProductUpdate{
@@ -676,9 +676,9 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s := tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.2, s.metrics[keyRulesSamplerAppliedRate])
+		require.Equal(t, 0.2, s.fetchMetric(keyRulesSamplerAppliedRate))
 		require.Equal(t, "my-tag-from-rc", globalconfig.HeaderTag("X-Test-Header"))
-		require.Equal(t, "from-rc", s.meta["ddtag"])
+		require.Equal(t, "from-rc", s.fetchMetadatum("ddtag"))
 
 		// Telemetry
 		assertCalled(t, telemetryClient, []telemetry.Configuration{
@@ -697,9 +697,9 @@ func TestOnRemoteConfigUpdate(t *testing.T) {
 		require.Equal(t, state.ApplyStateAcknowledged, applyStatus["path"].State)
 		s = tracer.StartSpan("web.request")
 		s.Finish()
-		require.Equal(t, 0.1, s.metrics[keyRulesSamplerAppliedRate])
+		require.Equal(t, 0.1, s.fetchMetric(keyRulesSamplerAppliedRate))
 		require.Equal(t, "my-tag-from-env", globalconfig.HeaderTag("X-Test-Header"))
-		require.Equal(t, "from-env", s.meta["ddtag"])
+		require.Equal(t, "from-env", s.fetchMetadatum("ddtag"))
 
 		// Telemetry
 		assertCalled(t, telemetryClient, []telemetry.Configuration{

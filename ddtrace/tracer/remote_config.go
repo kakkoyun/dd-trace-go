@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
+	"github.com/DataDog/dd-trace-go/v2/internal/locking"
 	"github.com/DataDog/dd-trace-go/v2/internal/log"
 	"github.com/DataDog/dd-trace-go/v2/internal/remoteconfig"
 	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
@@ -181,7 +182,7 @@ func (t *tracer) onRemoteConfigUpdate(u remoteconfig.ProductUpdate) map[string]s
 		if updated {
 			telemConfigs = append(telemConfigs, t.config.globalTags.toTelemetry())
 		}
-		if !t.config.enabled.current {
+		if !t.config.enabled.get() {
 			log.Debug("APM Tracing is disabled. Restart the service to enable it.")
 		}
 		if len(telemConfigs) > 0 {
@@ -219,11 +220,11 @@ func (t *tracer) onRemoteConfigUpdate(u remoteconfig.ProductUpdate) map[string]s
 			telemConfigs = append(telemConfigs, t.config.globalTags.toTelemetry())
 		}
 		if c.LibConfig.Enabled != nil {
-			if t.config.enabled.current && !*c.LibConfig.Enabled {
+			if t.config.enabled.get() && !*c.LibConfig.Enabled {
 				log.Debug("Disabled APM Tracing through RC. Restart the service to enable it.")
 				t.config.enabled.handleRC(c.LibConfig.Enabled)
 				telemConfigs = append(telemConfigs, t.config.enabled.toTelemetry())
-			} else if !t.config.enabled.current && *c.LibConfig.Enabled {
+			} else if !t.config.enabled.get() && *c.LibConfig.Enabled {
 				log.Debug("APM Tracing is disabled. Restart the service to enable it.")
 			}
 		}
@@ -242,7 +243,8 @@ type dynamicInstrumentationRCProbeConfig struct {
 }
 
 type dynamicInstrumentationRCState struct {
-	sync.Mutex
+	mu locking.Mutex
+	// +checklocks:mu
 	state map[string]dynamicInstrumentationRCProbeConfig
 }
 
@@ -254,7 +256,7 @@ var (
 func (t *tracer) dynamicInstrumentationRCUpdate(u remoteconfig.ProductUpdate) map[string]state.ApplyStatus {
 	applyStatus := map[string]state.ApplyStatus{}
 
-	diRCState.Lock()
+	diRCState.mu.Lock()
 	for k, v := range u {
 		log.Debug("Received dynamic instrumentation RC configuration for %s\n", k)
 		applyStatus[k] = state.ApplyStatus{State: state.ApplyStateUnknown}
@@ -264,7 +266,7 @@ func (t *tracer) dynamicInstrumentationRCUpdate(u remoteconfig.ProductUpdate) ma
 			configContent: string(v),
 		}
 	}
-	diRCState.Unlock()
+	diRCState.mu.Unlock()
 	return applyStatus
 }
 
@@ -277,18 +279,18 @@ func passProbeConfiguration(runtimeID, configPath, configContent string) {}
 
 func initalizeDynamicInstrumentationRemoteConfigState() {
 	diRCState = dynamicInstrumentationRCState{
-		state: map[string]dynamicInstrumentationRCProbeConfig{},
+		state: map[string]dynamicInstrumentationRCProbeConfig{}, // +checklocksignore: called under sync.Once!
 	}
 
 	go func() {
 		for {
 			time.Sleep(time.Second * 5)
-			diRCState.Lock()
+			diRCState.mu.Lock()
 			for _, v := range diRCState.state {
 				accessStringsToMitigatePageFault(v.runtimeID, v.configPath, v.configContent)
 				passProbeConfiguration(v.runtimeID, v.configPath, v.configContent)
 			}
-			diRCState.Unlock()
+			diRCState.mu.Unlock()
 		}
 	}()
 }

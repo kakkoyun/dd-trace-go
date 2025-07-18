@@ -82,9 +82,9 @@ type abandonedSpanCandidate struct {
 	Integration     string
 }
 
-func newAbandonedSpanCandidate(s *Span, finished bool) *abandonedSpanCandidate {
+func newAbandonedSpanCandidate(s readOnlySpan, finished bool) *abandonedSpanCandidate {
 	var component string
-	if v, ok := s.meta[ext.Component]; ok {
+	if v, ok := s.getMetadatum(ext.Component); ok {
 		component = v
 	} else {
 		component = "manual"
@@ -94,10 +94,10 @@ func newAbandonedSpanCandidate(s *Span, finished bool) *abandonedSpanCandidate {
 	// Also, locking is not required as it's called while the span is already locked or it's
 	// being initialized.
 	c := &abandonedSpanCandidate{
-		Name:        s.name,
-		TraceID:     s.traceID,
-		SpanID:      s.spanID,
-		Start:       s.start,
+		Name:        s.getName(),
+		TraceID:     s.getTraceID(),
+		SpanID:      s.getSpanID(),
+		Start:       s.getStartTime(),
 		Finished:    finished,
 		Integration: component,
 	}
@@ -125,11 +125,15 @@ type abandonedSpansDebugger struct {
 	stop chan struct{}
 
 	// stopped reports whether the debugger is stopped (when non-zero).
+	// +checkatomic
 	stopped uint32
 
 	// addedSpans and removedSpans are internal counters, mainly for testing
 	// purposes
-	addedSpans, removedSpans uint32
+	// +checkatomic
+	addedSpans uint32
+	// +checkatomic
+	removedSpans uint32
 }
 
 // newAbandonedSpansDebugger creates a new abandonedSpansDebugger debugger

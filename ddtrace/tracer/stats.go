@@ -12,13 +12,13 @@ import (
 
 	"github.com/DataDog/datadog-agent/pkg/obfuscate"
 	"github.com/DataDog/datadog-agent/pkg/trace/stats"
+	"github.com/DataDog/datadog-go/v5/statsd"
+
 	"github.com/DataDog/dd-trace-go/v2/internal"
 	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/constants"
 	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/utils"
 	"github.com/DataDog/dd-trace-go/v2/internal/log"
 	"github.com/DataDog/dd-trace-go/v2/internal/processtags"
-
-	"github.com/DataDog/datadog-go/v5/statsd"
 )
 
 // tracerObfuscationVersion indicates which version of stats obfuscation logic we implement
@@ -39,6 +39,7 @@ type concentrator struct {
 	In chan *tracerStatSpan
 
 	// stopped reports whether the concentrator is stopped (when non-zero)
+	// +checkatomic
 	stopped uint32
 
 	spanConcentrator *stats.SpanConcentrator
@@ -161,20 +162,24 @@ func (c *concentrator) runIngester() {
 	}
 }
 
-func (c *concentrator) newTracerStatSpan(s *Span, obfuscator *obfuscate.Obfuscator) (*tracerStatSpan, bool) {
-	resource := s.resource
+func (c *concentrator) newTracerStatSpan(s readOnlySpan, obfuscator *obfuscate.Obfuscator) (*tracerStatSpan, bool) {
+	resource := s.getResource()
 	if c.shouldObfuscate() {
-		resource = obfuscatedResource(obfuscator, s.spanType, s.resource)
+		resource = obfuscatedResource(obfuscator, s.getSpanType(), s.getResource())
 	}
-	statSpan, ok := c.spanConcentrator.NewStatSpan(s.service, resource,
-		s.name, s.spanType, s.parentID, s.start, s.duration, s.error, s.meta, s.metrics, c.cfg.agent.peerTags)
+	statSpan, ok := c.spanConcentrator.NewStatSpan(
+		s.getService(), resource,
+		s.getName(), s.getSpanType(),
+		s.getParentID(), s.getStartTime(),
+		s.getDuration(), s.getErrorStatus(),
+		s.getMetadata(), s.getMetrics(),
+		c.cfg.agent.peerTags)
 	if !ok {
 		return nil, false
 	}
-	origin := s.meta[keyOrigin]
 	return &tracerStatSpan{
 		statSpan: statSpan,
-		origin:   origin,
+		origin:   s.fetchMetadatum(keyOrigin),
 	}, true
 }
 

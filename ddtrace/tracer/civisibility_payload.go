@@ -36,7 +36,7 @@ type ciVisibilityPayload struct {
 // Returns:
 //
 //	An error if encoding the event fails.
-func (p *ciVisibilityPayload) push(event *ciVisibilityEvent) error {
+func (p *ciVisibilityPayload) push(event payloadItem) error {
 	p.buf.Grow(event.Msgsize())
 	startTime := time.Now()
 	defer func() {

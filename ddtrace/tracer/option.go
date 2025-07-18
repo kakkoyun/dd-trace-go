@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"math"
 	"net"
 	"net/http"
@@ -21,12 +20,10 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"golang.org/x/mod/semver"
 
-	pb "github.com/DataDog/datadog-agent/pkg/proto/pbgo/trace"
 	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
 	"github.com/DataDog/dd-trace-go/v2/internal"
 	appsecconfig "github.com/DataDog/dd-trace-go/v2/internal/appsec/config"
@@ -40,7 +37,6 @@ import (
 	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
 	"github.com/DataDog/dd-trace-go/v2/internal/traceprof"
 	"github.com/DataDog/dd-trace-go/v2/internal/version"
-	"github.com/tinylib/msgp/msgp"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 )
@@ -426,7 +422,7 @@ func newConfig(opts ...StartOption) (*config, error) {
 	if v := os.Getenv("DD_TRACE_HEADER_TAGS"); v != "" {
 		c.headerAsTags.update(strings.Split(v, ","), telemetry.OriginEnvVar)
 		// Required to ensure that the startup header tags are set on reset.
-		c.headerAsTags.startup = c.headerAsTags.current
+		c.headerAsTags.setStartup(c.headerAsTags.get())
 	}
 	if v := getDDorOtelConfig("resourceAttributes"); v != "" {
 		tags := internal.ParseTagString(v)
@@ -435,7 +431,7 @@ func newConfig(opts ...StartOption) (*config, error) {
 			WithGlobalTag(key, val)(c)
 		}
 		// TODO: should we track the origin of these tags individually?
-		c.globalTags.cfgOrigin = telemetry.OriginEnvVar
+		c.globalTags.setOrigin(telemetry.OriginEnvVar)
 	}
 	if _, ok := os.LookupEnv("AWS_LAMBDA_FUNCTION_NAME"); ok {
 		// AWS_LAMBDA_FUNCTION_NAME being set indicates that we're running in an AWS Lambda environment.
@@ -449,7 +445,7 @@ func newConfig(opts ...StartOption) (*config, error) {
 	c.logDirectory = os.Getenv("DD_TRACE_LOG_DIRECTORY")
 	c.enabled = newDynamicConfig("tracing_enabled", internal.BoolVal(getDDorOtelConfig("enabled"), true), func(_ bool) bool { return true }, equal[bool])
 	if _, ok := os.LookupEnv("DD_TRACE_ENABLED"); ok {
-		c.enabled.cfgOrigin = telemetry.OriginEnvVar
+		c.enabled.setOrigin(telemetry.OriginEnvVar)
 	}
 	c.profilerEndpoints = internal.BoolEnv(traceprof.EndpointEnvVar, true)
 	c.profilerHotspots = internal.BoolEnv(traceprof.CodeHotspotsEnvVar, true)
@@ -587,7 +583,7 @@ func newConfig(opts ...StartOption) (*config, error) {
 	}
 
 	// if using stdout or traces are disabled or we are in ci visibility agentless mode, agent is disabled
-	agentDisabled := c.logToStdout || !c.enabled.current || c.ciVisibilityAgentless
+	agentDisabled := c.logToStdout || !c.enabled.get() || c.ciVisibilityAgentless
 	c.agent = loadAgentFeatures(agentDisabled, c.agentURL, c.httpClient)
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
@@ -603,7 +599,7 @@ func newConfig(opts ...StartOption) (*config, error) {
 	}
 	// Re-initialize the globalTags config with the value constructed from the environment and start options
 	// This allows persisting the initial value of globalTags for future resets and updates.
-	globalTagsOrigin := c.globalTags.cfgOrigin
+	globalTagsOrigin := c.globalTags.getOrigin()
 	c.initGlobalTags(c.globalTags.get(), globalTagsOrigin)
 	if tracingEnabled, _, _ := stableconfig.Bool("DD_APM_TRACING_ENABLED", true); !tracingEnabled {
 		apmTracingDisabled(c)
@@ -1092,21 +1088,21 @@ func WithGlobalTag(k string, v interface{}) StartOption {
 		if c.globalTags.get() == nil {
 			c.initGlobalTags(map[string]interface{}{}, telemetry.OriginDefault)
 		}
-		c.globalTags.Lock()
-		defer c.globalTags.Unlock()
+		c.globalTags.mu.Lock()
+		defer c.globalTags.mu.Unlock()
 		c.globalTags.current[k] = v
 	}
 }
 
 // initGlobalTags initializes the globalTags config with the provided init value
 func (c *config) initGlobalTags(init map[string]interface{}, origin telemetry.Origin) {
-	apply := func(map[string]interface{}) bool {
+	apply := func(current map[string]interface{}) bool {
 		// always set the runtime ID on updates
-		c.globalTags.current[ext.RuntimeID] = globalconfig.RuntimeID()
+		current[ext.RuntimeID] = globalconfig.RuntimeID()
 		return true
 	}
 	c.globalTags = newDynamicConfig("trace_tags", init, apply, equalMap[string])
-	c.globalTags.cfgOrigin = origin
+	c.globalTags.setOrigin(origin)
 }
 
 // WithSampler sets the given sampler to be used with the tracer. By default
@@ -1437,104 +1433,6 @@ func WithHeaderTags(headerAsTags []string) StartOption {
 		c.headerAsTags = newDynamicConfig("trace_header_tags", headerAsTags, setHeaderTags, equalSlice[string])
 		setHeaderTags(headerAsTags)
 	}
-}
-
-// WithTestDefaults configures the tracer to not send spans to the agent, and to not collect metrics.
-// Warning:
-// This option should only be used in tests, as it will prevent the tracer from sending spans to the agent.
-func WithTestDefaults(statsdClient any) StartOption {
-	return func(c *config) {
-		if statsdClient == nil {
-			statsdClient = &statsd.NoOpClientDirect{}
-		}
-		c.statsdClient = statsdClient.(internal.StatsdClient)
-		c.transport = newDummyTransport()
-	}
-}
-
-// Mock Transport with a real Encoder
-type dummyTransport struct {
-	sync.RWMutex
-	traces     spanLists
-	stats      []*pb.ClientStatsPayload
-	obfVersion int
-}
-
-func newDummyTransport() *dummyTransport {
-	return &dummyTransport{traces: spanLists{}, obfVersion: -1}
-}
-
-func (t *dummyTransport) Len() int {
-	t.RLock()
-	defer t.RUnlock()
-	return len(t.traces)
-}
-
-func (t *dummyTransport) sendStats(p *pb.ClientStatsPayload, obfVersion int) error {
-	t.Lock()
-	t.stats = append(t.stats, p)
-	t.obfVersion = obfVersion
-	t.Unlock()
-	return nil
-}
-
-func (t *dummyTransport) Stats() []*pb.ClientStatsPayload {
-	t.RLock()
-	defer t.RUnlock()
-	return t.stats
-}
-
-func (t *dummyTransport) ObfuscationVersion() int {
-	t.RLock()
-	defer t.RUnlock()
-	return t.obfVersion
-}
-
-func (t *dummyTransport) send(p *payload) (io.ReadCloser, error) {
-	traces, err := decode(p)
-	if err != nil {
-		return nil, err
-	}
-	t.Lock()
-	t.traces = append(t.traces, traces...)
-	t.Unlock()
-	ok := io.NopCloser(strings.NewReader("OK"))
-	return ok, nil
-}
-
-func (t *dummyTransport) endpoint() string {
-	return "http://localhost:9/v0.4/traces"
-}
-
-func decode(p *payload) (spanLists, error) {
-	var traces spanLists
-	err := msgp.Decode(p, &traces)
-	return traces, err
-}
-
-func encode(traces [][]*Span) (*payload, error) {
-	p := newPayload()
-	for _, t := range traces {
-		if err := p.push(t); err != nil {
-			return p, err
-		}
-	}
-	return p, nil
-}
-
-func (t *dummyTransport) Reset() {
-	t.Lock()
-	t.traces = t.traces[:0]
-	t.Unlock()
-}
-
-func (t *dummyTransport) Traces() spanLists {
-	t.Lock()
-	defer t.Unlock()
-
-	traces := t.traces
-	t.traces = spanLists{}
-	return traces
 }
 
 // setHeaderTags sets the global header tags.

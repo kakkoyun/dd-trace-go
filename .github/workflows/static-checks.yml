@@ -126,5 +126,4 @@ jobs:
         with:
           go-version: ${{ inputs.go-version }}
       - name: Run checklocks
-        # Errors are expected here, but we want to fail the CI if there are any errors for now
-        run: ./scripts/checklocks.sh || true
+        run: ./scripts/checklocks.sh ./ddtrace/tracer

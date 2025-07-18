@@ -6,8 +6,7 @@
 package tracer
 
 import (
-	"sync"
-
+	"github.com/DataDog/dd-trace-go/v2/internal/locking"
 	"github.com/DataDog/dd-trace-go/v2/internal/telemetry"
 )
 
@@ -15,13 +14,20 @@ import (
 // It's designed to satisfy the dynamic configuration semantics (i.e reset, update, apply configuration changes).
 // This structure will be extended to track the origin of configuration values as well (e.g remote_config, env_var).
 type dynamicConfig[T any] struct {
-	sync.RWMutex
-	current   T                 // holds the current configuration value
-	startup   T                 // holds the startup configuration value
-	cfgName   string            // holds the name of the configuration, has to be compatible with telemetry.Configuration.Name
-	cfgOrigin telemetry.Origin  // holds the origin of the current configuration value (currently only supports remote_config, empty otherwise)
-	apply     func(T) bool      // executes any config-specific operations to propagate the update properly, returns whether the update was applied
-	equal     func(x, y T) bool // compares two configuration values, this is used to avoid unnecessary config and telemetry updates
+	mu locking.RWMutex
+
+	// +checklocks:mu
+	current T // holds the current configuration value
+	// +checklocks:mu
+	startup T // holds the startup configuration value
+	// +checklocks:mu
+	cfgName string // holds the name of the configuration, has to be compatible with telemetry.Configuration.Name
+	// +checklocks:mu
+	cfgOrigin telemetry.Origin // holds the origin of the current configuration value (currently only supports remote_config, empty otherwise)
+	// +checklocks:mu
+	apply func(T) bool // executes any config-specific operations to propagate the update properly, returns whether the update was applied
+	// +checklocks:mu
+	equal func(x, y T) bool // compares two configuration values, this is used to avoid unnecessary config and telemetry updates
 }
 
 func newDynamicConfig[T any](name string, val T, apply func(T) bool, equal func(x, y T) bool) dynamicConfig[T] {
@@ -35,29 +41,52 @@ func newDynamicConfig[T any](name string, val T, apply func(T) bool, equal func(
 	}
 }
 
+// getOrigin returns the origin of the current configuration value
+func (dc *dynamicConfig[T]) getOrigin() telemetry.Origin {
+	dc.mu.RLock()
+	defer dc.mu.RUnlock()
+	return dc.cfgOrigin
+}
+
+// setOrigin sets the origin of the current configuration value
+func (dc *dynamicConfig[T]) setOrigin(origin telemetry.Origin) {
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
+	dc.cfgOrigin = origin
+}
+
+// setStartup sets the startup configuration value
+func (dc *dynamicConfig[T]) setStartup(val T) {
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
+	dc.startup = val
+}
+
+// set
+
 // get returns the current configuration value
 func (dc *dynamicConfig[T]) get() T {
-	dc.RLock()
-	defer dc.RUnlock()
+	dc.mu.RLock()
+	defer dc.mu.RUnlock()
 	return dc.current
 }
 
 // update applies a new configuration value
 func (dc *dynamicConfig[T]) update(val T, origin telemetry.Origin) bool {
-	dc.Lock()
-	defer dc.Unlock()
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
 	if dc.equal(dc.current, val) {
 		return false
 	}
 	dc.current = val
 	dc.cfgOrigin = origin
-	return dc.apply(val)
+	return dc.apply(dc.current)
 }
 
 // reset re-applies the startup configuration value
 func (dc *dynamicConfig[T]) reset() bool {
-	dc.Lock()
-	defer dc.Unlock()
+	dc.mu.Lock()
+	defer dc.mu.Unlock()
 	if dc.equal(dc.current, dc.startup) {
 		return false
 	}
@@ -78,8 +107,8 @@ func (dc *dynamicConfig[T]) handleRC(val *T) bool {
 
 // toTelemetry returns the current configuration value as telemetry.Configuration
 func (dc *dynamicConfig[T]) toTelemetry() telemetry.Configuration {
-	dc.RLock()
-	defer dc.RUnlock()
+	dc.mu.RLock()
+	defer dc.mu.RUnlock()
 	return telemetry.Configuration{
 		Name:   dc.cfgName,
 		Value:  dc.current,

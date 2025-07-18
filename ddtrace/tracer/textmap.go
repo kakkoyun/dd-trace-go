@@ -287,8 +287,9 @@ func (p *chainedPropagator) Extract(carrier interface{}) (*SpanContext, error) {
 
 		// If this is the baggage propagator, just stash its items into pendingBaggage
 		if _, isBaggage := v.(*propagatorBaggage); isBaggage {
-			if extractedCtx != nil && len(extractedCtx.baggage) > 0 {
-				for k, v := range extractedCtx.baggage {
+			baggage := extractedCtx.getBaggage()
+			if extractedCtx != nil && len(baggage) > 0 {
+				for k, v := range baggage {
 					pendingBaggage[k] = v
 				}
 			}
@@ -331,10 +332,13 @@ func (p *chainedPropagator) Extract(carrier interface{}) (*SpanContext, error) {
 			} else if extractedCtx2 != nil { // Trace IDs do not match - create span links
 				link := SpanLink{TraceID: extractedCtx2.TraceIDLower(), SpanID: extractedCtx2.SpanID(), TraceIDHigh: extractedCtx2.TraceIDUpper(), Attributes: map[string]string{"reason": "terminated_context", "context_headers": getPropagatorName(v)}}
 				if trace := extractedCtx2.trace; trace != nil {
-					if flags := uint32(*trace.priority); flags > 0 { // Set the flags based on the sampling priority
-						link.Flags = 1
-					} else {
-						link.Flags = 0
+					// Set the flags based on the sampling priority.
+					if priority, ok := trace.samplingPriority(); ok {
+						if priority > 0 {
+							link.Flags = 1
+						} else {
+							link.Flags = 0
+						}
 					}
 					link.Tracestate = extractedCtx2.trace.propagatingTag(tracestateHeader)
 				}
@@ -357,17 +361,17 @@ func (p *chainedPropagator) Extract(carrier interface{}) (*SpanContext, error) {
 		return nil, ErrSpanContextNotFound
 	}
 	if len(pendingBaggage) > 0 {
-		if ctx.baggage == nil {
-			ctx.baggage = make(map[string]string, len(pendingBaggage))
+		if ctx.getBaggage() == nil {
+			ctx.setBaggage(make(map[string]string, len(pendingBaggage)))
 		}
 		for k, v := range pendingBaggage {
-			ctx.baggage[k] = v
+			ctx.setBaggageItem(k, v)
 		}
 		atomic.StoreUint32(&ctx.hasBaggage, 1)
 	}
 
 	if len(links) > 0 {
-		ctx.spanLinks = links
+		ctx.setSpanLinks(links)
 	}
 	log.Debug("Extracted span context: %s", ctx.safeDebugString())
 	return ctx, nil
@@ -453,8 +457,8 @@ func (p *propagator) injectTextMap(spanCtx *SpanContext, writer TextMapWriter) e
 	if sp, ok := ctx.SamplingPriority(); ok {
 		writer.Set(p.cfg.PriorityHeader, strconv.Itoa(sp))
 	}
-	if ctx.origin != "" {
-		writer.Set(originHeader, ctx.origin)
+	if origin := ctx.getOrigin(); origin != "" {
+		writer.Set(originHeader, origin)
 	}
 	ctx.ForeachBaggageItem(func(k, v string) bool {
 		// Propagate OpenTracing baggage.
@@ -541,7 +545,7 @@ func (p *propagator) extractTextMap(reader TextMapReader) (*SpanContext, error) 
 			}
 			ctx.setSamplingPriority(priority, samplernames.Unknown)
 		case originHeader:
-			ctx.origin = v
+			ctx.setOrigin(v)
 		case traceTagsHeader:
 			unmarshalPropagatingTags(&ctx, v)
 		default:
@@ -881,7 +885,7 @@ func (*propagatorW3c) injectTextMap(spanCtx *SpanContext, writer TextMapWriter) 
 	// or if there is a span on the trace
 	// or the tracestateHeader doesn't start with `dd=`
 	// we need to recreate tracestate
-	if ctx.updated ||
+	if ctx.getUpdated() ||
 		(!ctx.isRemote || ctx.isRemote && ctx.trace != nil && ctx.trace.root != nil) ||
 		(ctx.trace != nil && !strings.HasPrefix(ctx.trace.propagatingTag(tracestateHeader), "dd=")) ||
 		ctx.trace.propagatingTagsLen() == 0 {
@@ -1053,8 +1057,8 @@ func composeTracestate(ctx *SpanContext, priority int, oldState string) string {
 	b.WriteString(strconv.Itoa(priority))
 	listLength := 1
 
-	if ctx.origin != "" {
-		oWithSub := sm.Mutate(originDisallowedFn, ctx.origin)
+	if origin := ctx.getOrigin(); origin != "" {
+		oWithSub := sm.Mutate(originDisallowedFn, origin)
 		b.WriteString(";o:")
 		b.WriteString(oWithSub)
 	}
@@ -1263,7 +1267,7 @@ func parseTracestate(ctx *SpanContext, header string) {
 			}
 			key, val := keyVal[0], keyVal[1]
 			if key == "o" {
-				ctx.origin = strings.ReplaceAll(val, "~", "=")
+				ctx.setOrigin(strings.ReplaceAll(val, "~", "="))
 			} else if key == "s" {
 				stateP, err := strconv.Atoi(val)
 				if err != nil {
@@ -1469,4 +1473,34 @@ func (*propagatorBaggage) extractTextMap(reader TextMapReader) (*SpanContext, er
 	}
 
 	return &ctx, nil
+}
+
+const hexEncodingDigits = "0123456789abcdef"
+
+// spanIDHexEncoded returns the hex encoded string of the given span ID `u`
+// with the given padding.
+//
+// Code is borrowed from `fmt.fmtInteger` in the standard library.
+func spanIDHexEncoded(u uint64, padding int) string {
+	// The allocated intbuf with a capacity of 68 bytes
+	// is large enough for integer formatting.
+	var intbuf [68]byte
+	buf := intbuf[0:]
+	if padding > 68 {
+		buf = make([]byte, padding)
+	}
+	// Because printing is easier right-to-left: format u into buf, ending at buf[i].
+	i := len(buf)
+	for u >= 16 {
+		i--
+		buf[i] = hexEncodingDigits[u&0xF]
+		u >>= 4
+	}
+	i--
+	buf[i] = hexEncodingDigits[u]
+	for i > 0 && padding > len(buf)-i {
+		i--
+		buf[i] = '0'
+	}
+	return string(buf[i:])
 }

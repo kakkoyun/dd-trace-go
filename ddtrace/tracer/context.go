@@ -50,8 +50,8 @@ func StartSpanFromContext(ctx context.Context, operationName string, opts ...Sta
 	}
 	optsLocal = append(optsLocal, withContext(ctx))
 	s := StartSpan(operationName, optsLocal...)
-	if s != nil && s.pprofCtxActive != nil {
-		ctx = s.pprofCtxActive
+	if pprofCtx := s.getActivePprofContext(); pprofCtx != nil {
+		ctx = pprofCtx
 	}
 	return s, ContextWithSpan(ctx, s)
 }

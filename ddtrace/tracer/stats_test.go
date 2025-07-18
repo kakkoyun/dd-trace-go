@@ -217,7 +217,7 @@ func TestObfuscation(t *testing.T) {
 	assert.Len(t, actualStats, 1)
 	assert.Len(t, actualStats[0].Stats, 1)
 	assert.Len(t, actualStats[0].Stats[0].Stats, 1)
-	assert.Equal(t, 2, tsp.obfVersion)
+	assert.Equal(t, 2, tsp.ObfuscationVersion())
 	assert.Equal(t, "GET", actualStats[0].Stats[0].Stats[0].Resource)
 }
 
@@ -238,6 +238,7 @@ func TestStatsByKind(t *testing.T) {
 	s2.SetTag("span.kind", "invalid")
 
 	c := newConcentrator(&config{transport: newDummyTransport(), env: "someEnv"}, 100, &statsd.NoOpClientDirect{})
+
 	_, ok := c.newTracerStatSpan(&s1, nil)
 	assert.True(t, ok)
 

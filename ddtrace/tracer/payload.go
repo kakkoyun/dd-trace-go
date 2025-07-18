@@ -50,6 +50,7 @@ type payload struct {
 	off int
 
 	// count specifies the number of items in the stream.
+	// +checkatomic
 	count uint32
 
 	// buf holds the sequence of msgpack-encoded items.
@@ -61,6 +62,12 @@ type payload struct {
 
 var _ io.Reader = (*payload)(nil)
 
+type payloadItem interface {
+	msgp.Encodable
+
+	Msgsize() int
+}
+
 // newPayload returns a ready to use payload.
 func newPayload() *payload {
 	p := &payload{
@@ -71,7 +78,7 @@ func newPayload() *payload {
 }
 
 // push pushes a new item into the stream.
-func (p *payload) push(t spanList) error {
+func (p *payload) push(t payloadItem) error {
 	p.buf.Grow(t.Msgsize())
 	if err := msgp.Encode(&p.buf, t); err != nil {
 		return err

@@ -24,9 +24,12 @@ import (
 	"runtime"
 	"runtime/debug"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
+	pb "github.com/DataDog/datadog-agent/pkg/proto/pbgo/trace"
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
 	"github.com/DataDog/dd-trace-go/v2/internal"
 	"github.com/DataDog/dd-trace-go/v2/internal/globalconfig"
@@ -36,7 +39,110 @@ import (
 	"github.com/DataDog/dd-trace-go/v2/internal/version"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tinylib/msgp/msgp"
 )
+
+// WithTestDefaults configures the tracer to not send spans to the agent, and to not collect metrics.
+// Warning:
+// This option should only be used in tests, as it will prevent the tracer from sending spans to the agent.
+func WithTestDefaults(statsdClient any) StartOption {
+	return func(c *config) {
+		if statsdClient == nil {
+			statsdClient = &statsd.NoOpClientDirect{}
+		}
+		c.statsdClient = statsdClient.(internal.StatsdClient)
+		c.transport = newDummyTransport()
+	}
+}
+
+// Mock Transport with a real Encoder
+type dummyTransport struct {
+	mu sync.RWMutex
+
+	// +checklocks:mu
+	traces serializableTraceList
+	// +checklocks:mu
+	stats []*pb.ClientStatsPayload
+	// +checklocks:mu
+	obfVersion int
+}
+
+func newDummyTransport() *dummyTransport {
+	return &dummyTransport{traces: serializableTraceList{}, obfVersion: -1}
+}
+
+func (t *dummyTransport) Len() int {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	return len(t.traces)
+}
+
+func (t *dummyTransport) sendStats(p *pb.ClientStatsPayload, obfVersion int) error {
+	t.mu.Lock()
+	t.stats = append(t.stats, p)
+	t.obfVersion = obfVersion
+	t.mu.Unlock()
+	return nil
+}
+
+func (t *dummyTransport) Stats() []*pb.ClientStatsPayload {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	return t.stats
+}
+
+func (t *dummyTransport) ObfuscationVersion() int {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	return t.obfVersion
+}
+
+func (t *dummyTransport) send(p *payload) (io.ReadCloser, error) {
+	traces, err := decode(p)
+	if err != nil {
+		return nil, err
+	}
+	t.mu.Lock()
+	t.traces = append(t.traces, traces...)
+	t.mu.Unlock()
+	ok := io.NopCloser(strings.NewReader("OK"))
+	return ok, nil
+}
+
+func (t *dummyTransport) endpoint() string {
+	return "http://localhost:9/v0.4/traces"
+}
+
+func decode(p *payload) (serializableTraceList, error) {
+	var traces serializableTraceList
+	err := msgp.Decode(p, &traces)
+	return traces, err
+}
+
+func encode(traces serializableTraceList) (*payload, error) {
+	p := newPayload()
+	for _, t := range traces {
+		if err := p.push(t); err != nil {
+			return p, err
+		}
+	}
+	return p, nil
+}
+
+func (t *dummyTransport) Reset() {
+	t.mu.Lock()
+	t.traces = t.traces[:0]
+	t.mu.Unlock()
+}
+
+func (t *dummyTransport) Traces() serializableTraceList {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	traces := t.traces
+	t.traces = serializableTraceList{}
+	return traces
+}
 
 func withTransport(t transport) StartOption {
 	return func(c *config) {
@@ -784,8 +890,8 @@ func TestTracerOptionsDefaults(t *testing.T) {
 			defer tracer.Stop()
 			assert.NoError(t, err)
 			c := tracer.config
-			assert.True(t, c.enabled.current)
-			assert.Equal(t, c.enabled.cfgOrigin, telemetry.OriginDefault)
+			assert.True(t, c.enabled.get())
+			assert.Equal(t, c.enabled.getOrigin(), telemetry.OriginDefault)
 		})
 
 		t.Run("override", func(t *testing.T) {
@@ -794,8 +900,8 @@ func TestTracerOptionsDefaults(t *testing.T) {
 			defer tracer.Stop()
 			assert.NoError(t, err)
 			c := tracer.config
-			assert.False(t, c.enabled.current)
-			assert.Equal(t, c.enabled.cfgOrigin, telemetry.OriginEnvVar)
+			assert.False(t, c.enabled.get())
+			assert.Equal(t, c.enabled.getOrigin(), telemetry.OriginEnvVar)
 		})
 	})
 
@@ -1260,11 +1366,12 @@ func TestStartWithLink(t *testing.T) {
 	defer tracer.Stop()
 
 	span := tracer.StartSpan("test.request", WithSpanLinks(links))
-	assert.Len(span.spanLinks, 2)
-	assert.Equal(span.spanLinks[0].TraceID, uint64(1))
-	assert.Equal(span.spanLinks[0].SpanID, uint64(2))
-	assert.Equal(span.spanLinks[1].TraceID, uint64(3))
-	assert.Equal(span.spanLinks[1].SpanID, uint64(4))
+	spanLinks := span.getSpanLinks()
+	assert.Len(spanLinks, 2)
+	assert.Equal(spanLinks[0].TraceID, uint64(1))
+	assert.Equal(spanLinks[0].SpanID, uint64(2))
+	assert.Equal(spanLinks[1].TraceID, uint64(3))
+	assert.Equal(spanLinks[1].SpanID, uint64(4))
 }
 
 func TestOtelResourceAtttributes(t *testing.T) {
@@ -1587,7 +1694,7 @@ func TestWithTraceEnabled(t *testing.T) {
 		assert := assert.New(t)
 		c, err := newConfig(WithTraceEnabled(false))
 		assert.NoError(err)
-		assert.False(c.enabled.current)
+		assert.False(c.enabled.get())
 	})
 
 	t.Run("otel-env", func(t *testing.T) {
@@ -1595,7 +1702,7 @@ func TestWithTraceEnabled(t *testing.T) {
 		t.Setenv("OTEL_TRACES_EXPORTER", "none")
 		c, err := newConfig()
 		assert.NoError(err)
-		assert.False(c.enabled.current)
+		assert.False(c.enabled.get())
 	})
 
 	t.Run("dd-env", func(t *testing.T) {
@@ -1603,7 +1710,7 @@ func TestWithTraceEnabled(t *testing.T) {
 		t.Setenv("DD_TRACE_ENABLED", "false")
 		c, err := newConfig()
 		assert.NoError(err)
-		assert.False(c.enabled.current)
+		assert.False(c.enabled.get())
 	})
 
 	t.Run("override-chain", func(t *testing.T) {
@@ -1613,11 +1720,11 @@ func TestWithTraceEnabled(t *testing.T) {
 		t.Setenv("DD_TRACE_ENABLED", "true")
 		c, err := newConfig()
 		assert.NoError(err)
-		assert.True(c.enabled.current)
+		assert.True(c.enabled.get())
 		// tracer option overrides dd env
 		c, err = newConfig(WithTraceEnabled(false))
 		assert.NoError(err)
-		assert.False(c.enabled.current)
+		assert.False(c.enabled.get())
 	})
 }
 
@@ -1848,17 +1955,17 @@ func TestWithStartSpanConfig(t *testing.T) {
 	defer tracer.Stop()
 	assert.NoError(err)
 
-	s := tracer.StartSpan("test", WithStartSpanConfig(cfg))
-	defer s.Finish()
-	assert.Equal(float64(1), s.metrics[keyMeasured])
-	assert.Equal("value", s.meta["key"])
-	assert.Equal(parent.Context().SpanID(), s.parentID)
+	var s recordingSpan = tracer.StartSpan("test", WithStartSpanConfig(cfg))
+	assert.Equal(float64(1), s.fetchMetric(keyMeasured))
+	assert.Equal("value", s.fetchMetadatum("key"))
+	assert.Equal(parent.Context().SpanID(), s.getParentID())
 	assert.Equal(parent.Context().TraceID(), s.Context().TraceID())
-	assert.Equal("resource", s.resource)
-	assert.Equal(service, s.service)
-	assert.Equal(spanID, s.spanID)
-	assert.Equal(ext.SpanTypeWeb, s.spanType)
-	assert.Equal(tm.UnixNano(), s.start)
+	assert.Equal("resource", s.getResource())
+	assert.Equal(service, s.getService())
+	assert.Equal(spanID, s.getSpanID())
+	assert.Equal(ext.SpanTypeWeb, s.getSpanType())
+	assert.Equal(tm.UnixNano(), s.getStartTime())
+	s.Finish()
 }
 
 func TestNewFinishConfig(t *testing.T) {
@@ -1893,15 +2000,19 @@ func TestWithStartSpanConfigNonEmptyTags(t *testing.T) {
 	defer tracer.Stop()
 	assert.NoError(err)
 
-	s := tracer.StartSpan(
+	var s recordingSpan = tracer.StartSpan(
 		"test",
 		Tag("k2", "v2"),
 		WithStartSpanConfig(cfg),
 		Tag("key", "after_start_span_config"),
 	)
 	defer s.Finish()
-	assert.Equal("should_override", s.meta["k2"])
-	assert.Equal("after_start_span_config", s.meta["key"])
+	val, ok := s.getMetadatum("k2")
+	assert.True(ok)
+	assert.Equal("should_override", val)
+	val, ok = s.getMetadatum("key")
+	assert.True(ok)
+	assert.Equal("after_start_span_config", val)
 }
 
 func optsTestConsumer(opts ...StartSpanOption) {

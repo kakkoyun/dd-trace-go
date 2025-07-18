@@ -36,8 +36,19 @@ func setTestTime() func() {
 
 // spanAge takes in a span and returns the current test duration of the
 // span in seconds as a string
-func spanAge(s *Span) string {
-	return fmt.Sprintf("%d sec", (now()-s.start)/int64(time.Second))
+func spanAge(s readOnlySpan) string {
+	return fmt.Sprintf("%d sec", (now()-s.getStartTime())/int64(time.Second))
+}
+
+func formatSpanString(s readOnlySpan) string {
+	var integration string
+	if v, ok := s.getMetadatum(ext.Component); ok {
+		integration = v
+	} else {
+		integration = "manual"
+	}
+	msg := fmt.Sprintf("[name: %s, integration: %s, span_id: %d, trace_id: %d, age: %s],", s.getName(), integration, s.getSpanID(), s.getTraceID(), spanAge(s))
+	return msg
 }
 
 func assertProcessedSpans(assert *assert.Assertions, t *tracer, startedSpans, finishedSpans int, ticker time.Duration) {
@@ -56,19 +67,6 @@ func assertProcessedSpans(assert *assert.Assertions, t *tracer, startedSpans, fi
 		return len(t.config.logger.(*log.RecordLogger).Logs()) > 2
 	}
 	assert.Eventually(cond, 1*time.Second, ticker)
-}
-
-func formatSpanString(s *Span) string {
-	s.mu.Lock()
-	var integration string
-	if v, ok := s.meta[ext.Component]; ok {
-		integration = v
-	} else {
-		integration = "manual"
-	}
-	msg := fmt.Sprintf("[name: %s, integration: %s, span_id: %d, trace_id: %d, age: %s],", s.name, integration, s.spanID, s.traceID, spanAge(s))
-	s.mu.Unlock()
-	return msg
 }
 
 func TestAbandonedSpansMetric(t *testing.T) {

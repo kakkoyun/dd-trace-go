@@ -39,7 +39,8 @@ install_tools() {
 	pushd "${TEMP_DIR}"
 	go -C "${SCRIPT_DIR}/../_tools" install golang.org/x/tools/cmd/goimports
 	go -C "${SCRIPT_DIR}/../_tools" install github.com/golangci/golangci-lint/v2/cmd/golangci-lint
-	go -C "${SCRIPT_DIR}/../_tools" install gvisor.dev/gvisor/tools/checklocks/cmd/checklocks@go
+	# Use the forked checklocks version as specified in _tools/tools.go
+	go -C "${SCRIPT_DIR}/../_tools" install github.com/kakkoyun/checklocks/cmd/checklocks
 	popd
 	message "Linting tools installed."
 }

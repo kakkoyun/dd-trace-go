@@ -86,13 +86,13 @@ func (c *SQLCommentCarrier) Inject(ctx *SpanContext) error {
 		fallthrough
 	case DBMPropagationModeService:
 		if ctx != nil && ctx.span != nil {
-			if e, ok := getMeta(ctx.span, ext.Environment); ok && e != "" {
+			if e, ok := ctx.span.getMetadatum(ext.Environment); ok && e != "" {
 				tags[sqlCommentEnv] = e
 			}
-			if v, ok := getMeta(ctx.span, ext.Version); ok && v != "" {
+			if v, ok := ctx.span.getMetadatum(ext.Version); ok && v != "" {
 				tags[sqlCommentParentVersion] = v
 			}
-			if v, ok := getMeta(ctx.span, ext.PeerService); ok && v != "" {
+			if v, ok := ctx.span.getMetadatum(ext.PeerService); ok && v != "" {
 				tags[sqlCommentPeerService] = v
 			}
 		}

@@ -32,7 +32,7 @@ func runTransportTest(t *testing.T, agentless, shouldSetAPIKey bool) {
 	assert := assert.New(t)
 
 	testCases := []struct {
-		payload [][]*Span
+		payload [][]recordingSpan
 	}{
 		{getTestTrace(1, 1)},
 		{getTestTrace(10, 1)},

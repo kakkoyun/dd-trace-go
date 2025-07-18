@@ -18,6 +18,7 @@ import (
 
 	// This is a fork of the original "checklocks" analyzer that lives in the gvisor repository.
 	// This is a temporary fork to allow for the development of the analyzer and testing.
+	// replace directive is not used because of a dependency conflict.
 	// _ "gvisor.dev/gvisor/tools/checklocks/cmd/checklocks"
 	_ "github.com/kakkoyun/checklocks/cmd/checklocks"
 	_ "mvdan.cc/sh/v3/cmd/shfmt"

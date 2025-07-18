@@ -10,9 +10,9 @@ package tracer
 import (
 	"strconv"
 
-	"github.com/DataDog/dd-trace-go/v2/ddtrace"
-	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/constants"
 	"github.com/tinylib/msgp/msgp"
+
+	"github.com/DataDog/dd-trace-go/v2/internal/civisibility/constants"
 )
 
 type (
@@ -150,7 +150,7 @@ type ciVisibilityEvent struct {
 	Version int32    `msg:"version"` // Version of the event type
 	Content tslvSpan `msg:"content"` // Content of the event
 
-	span *Span `msg:"-"` // Associated span (not marshaled)
+	recordingSpan `msg:"-"` // Associated span (not marshaled)
 }
 
 // SetTag sets a tag on the event's span and updates the content metadata and metrics.
@@ -160,9 +160,9 @@ type ciVisibilityEvent struct {
 //	key - The tag key.
 //	value - The tag value.
 func (e *ciVisibilityEvent) SetTag(key string, value interface{}) {
-	e.span.SetTag(key, value)
-	e.Content.Meta = e.span.meta
-	e.Content.Metrics = e.span.metrics
+	e.recordingSpan.SetTag(key, value)
+	e.Content.Meta = e.recordingSpan.getMetadata()
+	e.Content.Metrics = e.recordingSpan.getMetrics()
 }
 
 // SetOperationName sets the operation name of the event's span and updates the content name.
@@ -171,8 +171,8 @@ func (e *ciVisibilityEvent) SetTag(key string, value interface{}) {
 //
 //	operationName - The new operation name.
 func (e *ciVisibilityEvent) SetOperationName(operationName string) {
-	e.span.SetOperationName(operationName)
-	e.Content.Name = e.span.name
+	e.recordingSpan.SetOperationName(operationName)
+	e.Content.Name = e.recordingSpan.getName()
 }
 
 // BaggageItem retrieves the baggage item associated with the given key from the event's span.
@@ -185,7 +185,7 @@ func (e *ciVisibilityEvent) SetOperationName(operationName string) {
 //
 //	The baggage item value.
 func (e *ciVisibilityEvent) BaggageItem(key string) string {
-	return e.span.BaggageItem(key)
+	return e.recordingSpan.BaggageItem(key)
 }
 
 // SetBaggageItem sets a baggage item on the event's span.
@@ -195,7 +195,7 @@ func (e *ciVisibilityEvent) BaggageItem(key string) string {
 //	key - The baggage item key.
 //	val - The baggage item value.
 func (e *ciVisibilityEvent) SetBaggageItem(key, val string) {
-	e.span.SetBaggageItem(key, val)
+	e.recordingSpan.SetBaggageItem(key, val)
 }
 
 // Finish completes the event's span with optional finish options.
@@ -204,7 +204,7 @@ func (e *ciVisibilityEvent) SetBaggageItem(key, val string) {
 //
 //	opts - Optional finish options.
 func (e *ciVisibilityEvent) Finish(opts ...FinishOption) {
-	e.span.Finish(opts...)
+	e.recordingSpan.Finish(opts...)
 }
 
 // Context returns the span context of the event's span.
@@ -212,8 +212,10 @@ func (e *ciVisibilityEvent) Finish(opts ...FinishOption) {
 // Returns:
 //
 //	The span context.
-func (e *ciVisibilityEvent) Context() ddtrace.SpanContext {
-	return e.span.Context()
+//
+// func (e *ciVisibilityEvent) Context() ddtrace.SpanContext {
+func (e *ciVisibilityEvent) Context() *SpanContext {
+	return e.recordingSpan.Context()
 }
 
 // tslvSpan represents the detailed information of a span for CI visibility.
@@ -245,8 +247,8 @@ type tslvSpan struct {
 // Returns:
 //
 //	A pointer to the created ciVisibilityEvent.
-func getCiVisibilityEvent(span *Span) *ciVisibilityEvent {
-	switch span.spanType {
+func getCiVisibilityEvent(span recordingSpan) *ciVisibilityEvent {
+	switch span.getSpanType() {
 	case constants.SpanTypeTest:
 		return createTestEventFromSpan(span)
 	case constants.SpanTypeTestSuite:
@@ -269,17 +271,18 @@ func getCiVisibilityEvent(span *Span) *ciVisibilityEvent {
 // Returns:
 //
 //	A pointer to the created ciVisibilityEvent.
-func createTestEventFromSpan(span *Span) *ciVisibilityEvent {
+func createTestEventFromSpan(span recordingSpan) *ciVisibilityEvent {
 	tSpan := createTslvSpan(span)
 	tSpan.ParentID = 0
 	tSpan.SessionID = getAndRemoveMetaToUInt64(span, constants.TestSessionIDTag)
 	tSpan.ModuleID = getAndRemoveMetaToUInt64(span, constants.TestModuleIDTag)
 	tSpan.SuiteID = getAndRemoveMetaToUInt64(span, constants.TestSuiteIDTag)
-	tSpan.CorrelationID = getAndRemoveMeta(span, constants.ItrCorrelationIDTag)
-	tSpan.SpanID = span.spanID
-	tSpan.TraceID = span.traceID
+	tSpan.CorrelationID = span.fetchAndDeleteMetadatum(constants.ItrCorrelationIDTag)
+	tSpan.SpanID = span.getSpanID()
+	tSpan.TraceID = span.getTraceID()
 	return &ciVisibilityEvent{
-		span:    span,
+		recordingSpan: span,
+
 		Type:    constants.SpanTypeTest,
 		Version: 2,
 		Content: tSpan,
@@ -295,14 +298,15 @@ func createTestEventFromSpan(span *Span) *ciVisibilityEvent {
 // Returns:
 //
 //	A pointer to the created ciVisibilityEvent.
-func createTestSuiteEventFromSpan(span *Span) *ciVisibilityEvent {
+func createTestSuiteEventFromSpan(span recordingSpan) *ciVisibilityEvent {
 	tSpan := createTslvSpan(span)
 	tSpan.ParentID = 0
 	tSpan.SessionID = getAndRemoveMetaToUInt64(span, constants.TestSessionIDTag)
 	tSpan.ModuleID = getAndRemoveMetaToUInt64(span, constants.TestModuleIDTag)
 	tSpan.SuiteID = getAndRemoveMetaToUInt64(span, constants.TestSuiteIDTag)
 	return &ciVisibilityEvent{
-		span:    span,
+		recordingSpan: span,
+
 		Type:    constants.SpanTypeTestSuite,
 		Version: 1,
 		Content: tSpan,
@@ -318,13 +322,14 @@ func createTestSuiteEventFromSpan(span *Span) *ciVisibilityEvent {
 // Returns:
 //
 //	A pointer to the created ciVisibilityEvent.
-func createTestModuleEventFromSpan(span *Span) *ciVisibilityEvent {
+func createTestModuleEventFromSpan(span recordingSpan) *ciVisibilityEvent {
 	tSpan := createTslvSpan(span)
 	tSpan.ParentID = 0
 	tSpan.SessionID = getAndRemoveMetaToUInt64(span, constants.TestSessionIDTag)
 	tSpan.ModuleID = getAndRemoveMetaToUInt64(span, constants.TestModuleIDTag)
 	return &ciVisibilityEvent{
-		span:    span,
+		recordingSpan: span,
+
 		Type:    constants.SpanTypeTestModule,
 		Version: 1,
 		Content: tSpan,
@@ -340,12 +345,13 @@ func createTestModuleEventFromSpan(span *Span) *ciVisibilityEvent {
 // Returns:
 //
 //	A pointer to the created ciVisibilityEvent.
-func createTestSessionEventFromSpan(span *Span) *ciVisibilityEvent {
+func createTestSessionEventFromSpan(span recordingSpan) *ciVisibilityEvent {
 	tSpan := createTslvSpan(span)
 	tSpan.ParentID = 0
 	tSpan.SessionID = getAndRemoveMetaToUInt64(span, constants.TestSessionIDTag)
 	return &ciVisibilityEvent{
-		span:    span,
+		recordingSpan: span,
+
 		Type:    constants.SpanTypeTestSession,
 		Version: 1,
 		Content: tSpan,
@@ -361,12 +367,13 @@ func createTestSessionEventFromSpan(span *Span) *ciVisibilityEvent {
 // Returns:
 //
 //	A pointer to the created ciVisibilityEvent.
-func createSpanEventFromSpan(span *Span) *ciVisibilityEvent {
+func createSpanEventFromSpan(span recordingSpan) *ciVisibilityEvent {
 	tSpan := createTslvSpan(span)
-	tSpan.SpanID = span.spanID
-	tSpan.TraceID = span.traceID
+	tSpan.SpanID = span.getSpanID()
+	tSpan.TraceID = span.getTraceID()
 	return &ciVisibilityEvent{
-		span:    span,
+		recordingSpan: span,
+
 		Type:    constants.SpanTypeSpan,
 		Version: 1,
 		Content: tSpan,
@@ -382,45 +389,19 @@ func createSpanEventFromSpan(span *Span) *ciVisibilityEvent {
 // Returns:
 //
 //	The created tslvSpan.
-func createTslvSpan(span *Span) tslvSpan {
+func createTslvSpan(span readOnlySpan) tslvSpan {
 	return tslvSpan{
-		Name:     span.name,
-		Service:  span.service,
-		Resource: span.resource,
-		Type:     span.spanType,
-		Start:    span.start,
-		Duration: span.duration,
-		ParentID: span.parentID,
-		Error:    span.error,
-		Meta:     span.meta,
-		Metrics:  span.metrics,
+		Name:     span.getName(),
+		Service:  span.getService(),
+		Resource: span.getResource(),
+		Type:     span.getSpanType(),
+		Start:    span.getStartTime(),
+		Duration: span.getDuration(),
+		ParentID: span.getParentID(),
+		Error:    span.getErrorStatus(),
+		Meta:     span.getMetadata(),
+		Metrics:  span.getMetrics(),
 	}
-}
-
-// getAndRemoveMeta retrieves a metadata value from a span and removes it from the span's metadata and metrics.
-//
-// Parameters:
-//
-//	span - The span to modify.
-//	key - The metadata key to retrieve and remove.
-//
-// Returns:
-//
-//	The retrieved metadata value.
-func getAndRemoveMeta(span *Span, key string) string {
-	span.mu.Lock()
-	defer span.mu.Unlock()
-	if span.meta == nil {
-		span.meta = make(map[string]string, 1)
-	}
-
-	if v, ok := span.meta[key]; ok {
-		delete(span.meta, key)
-		delete(span.metrics, key)
-		return v
-	}
-
-	return ""
 }
 
 // getAndRemoveMetaToUInt64 retrieves a metadata value from a span, removes it, and converts it to a uint64.
@@ -433,8 +414,8 @@ func getAndRemoveMeta(span *Span, key string) string {
 // Returns:
 //
 //	The retrieved and converted metadata value as a uint64.
-func getAndRemoveMetaToUInt64(span *Span, key string) uint64 {
-	strValue := getAndRemoveMeta(span, key)
+func getAndRemoveMetaToUInt64(span recordingSpan, key string) uint64 {
+	strValue := span.fetchAndDeleteMetadatum(key)
 	i, err := strconv.ParseUint(strValue, 10, 64)
 	if err != nil {
 		return 0

@@ -7,7 +7,128 @@ import (
 )
 
 // DecodeMsg implements msgp.Decodable
-func (z *Span) DecodeMsg(dc *msgp.Reader) (err error) {
+func (z *serializableTrace) DecodeMsg(dc *msgp.Reader) (err error) {
+	var zb0002 uint32
+	zb0002, err = dc.ReadArrayHeader()
+	if err != nil {
+		err = msgp.WrapError(err)
+		return
+	}
+	if cap((*z)) >= int(zb0002) {
+		(*z) = (*z)[:zb0002]
+	} else {
+		(*z) = make(serializableTrace, zb0002)
+	}
+	for zb0001 := range *z {
+		err = (*z)[zb0001].DecodeMsg(dc)
+		if err != nil {
+			err = msgp.WrapError(err, zb0001)
+			return
+		}
+	}
+	return
+}
+
+// EncodeMsg implements msgp.Encodable
+func (z serializableTrace) EncodeMsg(en *msgp.Writer) (err error) {
+	err = en.WriteArrayHeader(uint32(len(z)))
+	if err != nil {
+		err = msgp.WrapError(err)
+		return
+	}
+	for zb0003 := range z {
+		err = z[zb0003].EncodeMsg(en)
+		if err != nil {
+			err = msgp.WrapError(err, zb0003)
+			return
+		}
+	}
+	return
+}
+
+// Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
+func (z serializableTrace) Msgsize() (s int) {
+	s = msgp.ArrayHeaderSize
+	for zb0003 := range z {
+		s += z[zb0003].Msgsize()
+	}
+	return
+}
+
+// DecodeMsg implements msgp.Decodable
+func (z *serializableTraceList) DecodeMsg(dc *msgp.Reader) (err error) {
+	var zb0003 uint32
+	zb0003, err = dc.ReadArrayHeader()
+	if err != nil {
+		err = msgp.WrapError(err)
+		return
+	}
+	if cap((*z)) >= int(zb0003) {
+		(*z) = (*z)[:zb0003]
+	} else {
+		(*z) = make(serializableTraceList, zb0003)
+	}
+	for zb0001 := range *z {
+		var zb0004 uint32
+		zb0004, err = dc.ReadArrayHeader()
+		if err != nil {
+			err = msgp.WrapError(err, zb0001)
+			return
+		}
+		if cap((*z)[zb0001]) >= int(zb0004) {
+			(*z)[zb0001] = ((*z)[zb0001])[:zb0004]
+		} else {
+			(*z)[zb0001] = make(serializableTrace, zb0004)
+		}
+		for zb0002 := range (*z)[zb0001] {
+			err = (*z)[zb0001][zb0002].DecodeMsg(dc)
+			if err != nil {
+				err = msgp.WrapError(err, zb0001, zb0002)
+				return
+			}
+		}
+	}
+	return
+}
+
+// EncodeMsg implements msgp.Encodable
+func (z serializableTraceList) EncodeMsg(en *msgp.Writer) (err error) {
+	err = en.WriteArrayHeader(uint32(len(z)))
+	if err != nil {
+		err = msgp.WrapError(err)
+		return
+	}
+	for zb0005 := range z {
+		err = en.WriteArrayHeader(uint32(len(z[zb0005])))
+		if err != nil {
+			err = msgp.WrapError(err, zb0005)
+			return
+		}
+		for zb0006 := range z[zb0005] {
+			err = z[zb0005][zb0006].EncodeMsg(en)
+			if err != nil {
+				err = msgp.WrapError(err, zb0005, zb0006)
+				return
+			}
+		}
+	}
+	return
+}
+
+// Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
+func (z serializableTraceList) Msgsize() (s int) {
+	s = msgp.ArrayHeaderSize
+	for zb0005 := range z {
+		s += msgp.ArrayHeaderSize
+		for zb0006 := range z[zb0005] {
+			s += z[zb0005][zb0006].Msgsize()
+		}
+	}
+	return
+}
+
+// DecodeMsg implements msgp.Decodable
+func (z *spanSnapshot) DecodeMsg(dc *msgp.Reader) (err error) {
 	var field []byte
 	_ = field
 	var zb0001 uint32
@@ -64,14 +185,14 @@ func (z *Span) DecodeMsg(dc *msgp.Reader) (err error) {
 			var zb0002 uint32
 			zb0002, err = dc.ReadMapHeader()
 			if err != nil {
-				err = msgp.WrapError(err, "meta")
+				err = msgp.WrapError(err, "metas")
 				return
 			}
-			if z.meta == nil {
-				z.meta = make(map[string]string, zb0002)
-			} else if len(z.meta) > 0 {
-				for key := range z.meta {
-					delete(z.meta, key)
+			if z.metas == nil {
+				z.metas = make(map[string]string, zb0002)
+			} else if len(z.metas) > 0 {
+				for key := range z.metas {
+					delete(z.metas, key)
 				}
 			}
 			for zb0002 > 0 {
@@ -80,15 +201,15 @@ func (z *Span) DecodeMsg(dc *msgp.Reader) (err error) {
 				var za0002 string
 				za0001, err = dc.ReadString()
 				if err != nil {
-					err = msgp.WrapError(err, "meta")
+					err = msgp.WrapError(err, "metas")
 					return
 				}
 				za0002, err = dc.ReadString()
 				if err != nil {
-					err = msgp.WrapError(err, "meta", za0001)
+					err = msgp.WrapError(err, "metas", za0001)
 					return
 				}
-				z.meta[za0001] = za0002
+				z.metas[za0001] = za0002
 			}
 		case "meta_struct":
 			err = z.metaStruct.DecodeMsg(dc)
@@ -145,9 +266,9 @@ func (z *Span) DecodeMsg(dc *msgp.Reader) (err error) {
 				return
 			}
 		case "error":
-			z.error, err = dc.ReadInt32()
+			z.errorStatus, err = dc.ReadInt32()
 			if err != nil {
-				err = msgp.WrapError(err, "error")
+				err = msgp.WrapError(err, "errorStatus")
 				return
 			}
 		case "span_links":
@@ -200,12 +321,12 @@ func (z *Span) DecodeMsg(dc *msgp.Reader) (err error) {
 }
 
 // EncodeMsg implements msgp.Encodable
-func (z *Span) EncodeMsg(en *msgp.Writer) (err error) {
+func (z *spanSnapshot) EncodeMsg(en *msgp.Writer) (err error) {
 	// check for omitted fields
 	zb0001Len := uint32(15)
 	var zb0001Mask uint16 /* 15 bits */
 	_ = zb0001Mask
-	if z.meta == nil {
+	if z.metas == nil {
 		zb0001Len--
 		zb0001Mask |= 0x40
 	}
@@ -295,20 +416,20 @@ func (z *Span) EncodeMsg(en *msgp.Writer) (err error) {
 			if err != nil {
 				return
 			}
-			err = en.WriteMapHeader(uint32(len(z.meta)))
+			err = en.WriteMapHeader(uint32(len(z.metas)))
 			if err != nil {
-				err = msgp.WrapError(err, "meta")
+				err = msgp.WrapError(err, "metas")
 				return
 			}
-			for za0001, za0002 := range z.meta {
+			for za0001, za0002 := range z.metas {
 				err = en.WriteString(za0001)
 				if err != nil {
-					err = msgp.WrapError(err, "meta")
+					err = msgp.WrapError(err, "metas")
 					return
 				}
 				err = en.WriteString(za0002)
 				if err != nil {
-					err = msgp.WrapError(err, "meta", za0001)
+					err = msgp.WrapError(err, "metas", za0001)
 					return
 				}
 			}
@@ -382,9 +503,9 @@ func (z *Span) EncodeMsg(en *msgp.Writer) (err error) {
 		if err != nil {
 			return
 		}
-		err = en.WriteInt32(z.error)
+		err = en.WriteInt32(z.errorStatus)
 		if err != nil {
-			err = msgp.WrapError(err, "error")
+			err = msgp.WrapError(err, "errorStatus")
 			return
 		}
 		if (zb0001Mask & 0x2000) == 0 { // if not omitted
@@ -430,10 +551,10 @@ func (z *Span) EncodeMsg(en *msgp.Writer) (err error) {
 }
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z *Span) Msgsize() (s int) {
+func (z *spanSnapshot) Msgsize() (s int) {
 	s = 1 + 5 + msgp.StringPrefixSize + len(z.name) + 8 + msgp.StringPrefixSize + len(z.service) + 9 + msgp.StringPrefixSize + len(z.resource) + 5 + msgp.StringPrefixSize + len(z.spanType) + 6 + msgp.Int64Size + 9 + msgp.Int64Size + 5 + msgp.MapHeaderSize
-	if z.meta != nil {
-		for za0001, za0002 := range z.meta {
+	if z.metas != nil {
+		for za0001, za0002 := range z.metas {
 			_ = za0002
 			s += msgp.StringPrefixSize + len(za0001) + msgp.StringPrefixSize + len(za0002)
 		}
@@ -452,262 +573,6 @@ func (z *Span) Msgsize() (s int) {
 	s += 12 + msgp.ArrayHeaderSize
 	for za0006 := range z.spanEvents {
 		s += z.spanEvents[za0006].Msgsize()
-	}
-	return
-}
-
-// DecodeMsg implements msgp.Decodable
-func (z *errorConfig) DecodeMsg(dc *msgp.Reader) (err error) {
-	var field []byte
-	_ = field
-	var zb0001 uint32
-	zb0001, err = dc.ReadMapHeader()
-	if err != nil {
-		err = msgp.WrapError(err)
-		return
-	}
-	for zb0001 > 0 {
-		zb0001--
-		field, err = dc.ReadMapKeyPtr()
-		if err != nil {
-			err = msgp.WrapError(err)
-			return
-		}
-		switch msgp.UnsafeString(field) {
-		case "noDebugStack":
-			z.noDebugStack, err = dc.ReadBool()
-			if err != nil {
-				err = msgp.WrapError(err, "noDebugStack")
-				return
-			}
-		case "stackFrames":
-			z.stackFrames, err = dc.ReadUint()
-			if err != nil {
-				err = msgp.WrapError(err, "stackFrames")
-				return
-			}
-		case "stackSkip":
-			z.stackSkip, err = dc.ReadUint()
-			if err != nil {
-				err = msgp.WrapError(err, "stackSkip")
-				return
-			}
-		default:
-			err = dc.Skip()
-			if err != nil {
-				err = msgp.WrapError(err)
-				return
-			}
-		}
-	}
-	return
-}
-
-// EncodeMsg implements msgp.Encodable
-func (z errorConfig) EncodeMsg(en *msgp.Writer) (err error) {
-	// map header, size 3
-	// write "noDebugStack"
-	err = en.Append(0x83, 0xac, 0x6e, 0x6f, 0x44, 0x65, 0x62, 0x75, 0x67, 0x53, 0x74, 0x61, 0x63, 0x6b)
-	if err != nil {
-		return
-	}
-	err = en.WriteBool(z.noDebugStack)
-	if err != nil {
-		err = msgp.WrapError(err, "noDebugStack")
-		return
-	}
-	// write "stackFrames"
-	err = en.Append(0xab, 0x73, 0x74, 0x61, 0x63, 0x6b, 0x46, 0x72, 0x61, 0x6d, 0x65, 0x73)
-	if err != nil {
-		return
-	}
-	err = en.WriteUint(z.stackFrames)
-	if err != nil {
-		err = msgp.WrapError(err, "stackFrames")
-		return
-	}
-	// write "stackSkip"
-	err = en.Append(0xa9, 0x73, 0x74, 0x61, 0x63, 0x6b, 0x53, 0x6b, 0x69, 0x70)
-	if err != nil {
-		return
-	}
-	err = en.WriteUint(z.stackSkip)
-	if err != nil {
-		err = msgp.WrapError(err, "stackSkip")
-		return
-	}
-	return
-}
-
-// Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z errorConfig) Msgsize() (s int) {
-	s = 1 + 13 + msgp.BoolSize + 12 + msgp.UintSize + 10 + msgp.UintSize
-	return
-}
-
-// DecodeMsg implements msgp.Decodable
-func (z *spanList) DecodeMsg(dc *msgp.Reader) (err error) {
-	var zb0002 uint32
-	zb0002, err = dc.ReadArrayHeader()
-	if err != nil {
-		err = msgp.WrapError(err)
-		return
-	}
-	if cap((*z)) >= int(zb0002) {
-		(*z) = (*z)[:zb0002]
-	} else {
-		(*z) = make(spanList, zb0002)
-	}
-	for zb0001 := range *z {
-		if dc.IsNil() {
-			err = dc.ReadNil()
-			if err != nil {
-				err = msgp.WrapError(err, zb0001)
-				return
-			}
-			(*z)[zb0001] = nil
-		} else {
-			if (*z)[zb0001] == nil {
-				(*z)[zb0001] = new(Span)
-			}
-			err = (*z)[zb0001].DecodeMsg(dc)
-			if err != nil {
-				err = msgp.WrapError(err, zb0001)
-				return
-			}
-		}
-	}
-	return
-}
-
-// EncodeMsg implements msgp.Encodable
-func (z spanList) EncodeMsg(en *msgp.Writer) (err error) {
-	err = en.WriteArrayHeader(uint32(len(z)))
-	if err != nil {
-		err = msgp.WrapError(err)
-		return
-	}
-	for zb0003 := range z {
-		if z[zb0003] == nil {
-			err = en.WriteNil()
-			if err != nil {
-				return
-			}
-		} else {
-			err = z[zb0003].EncodeMsg(en)
-			if err != nil {
-				err = msgp.WrapError(err, zb0003)
-				return
-			}
-		}
-	}
-	return
-}
-
-// Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z spanList) Msgsize() (s int) {
-	s = msgp.ArrayHeaderSize
-	for zb0003 := range z {
-		if z[zb0003] == nil {
-			s += msgp.NilSize
-		} else {
-			s += z[zb0003].Msgsize()
-		}
-	}
-	return
-}
-
-// DecodeMsg implements msgp.Decodable
-func (z *spanLists) DecodeMsg(dc *msgp.Reader) (err error) {
-	var zb0003 uint32
-	zb0003, err = dc.ReadArrayHeader()
-	if err != nil {
-		err = msgp.WrapError(err)
-		return
-	}
-	if cap((*z)) >= int(zb0003) {
-		(*z) = (*z)[:zb0003]
-	} else {
-		(*z) = make(spanLists, zb0003)
-	}
-	for zb0001 := range *z {
-		var zb0004 uint32
-		zb0004, err = dc.ReadArrayHeader()
-		if err != nil {
-			err = msgp.WrapError(err, zb0001)
-			return
-		}
-		if cap((*z)[zb0001]) >= int(zb0004) {
-			(*z)[zb0001] = ((*z)[zb0001])[:zb0004]
-		} else {
-			(*z)[zb0001] = make(spanList, zb0004)
-		}
-		for zb0002 := range (*z)[zb0001] {
-			if dc.IsNil() {
-				err = dc.ReadNil()
-				if err != nil {
-					err = msgp.WrapError(err, zb0001, zb0002)
-					return
-				}
-				(*z)[zb0001][zb0002] = nil
-			} else {
-				if (*z)[zb0001][zb0002] == nil {
-					(*z)[zb0001][zb0002] = new(Span)
-				}
-				err = (*z)[zb0001][zb0002].DecodeMsg(dc)
-				if err != nil {
-					err = msgp.WrapError(err, zb0001, zb0002)
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-// EncodeMsg implements msgp.Encodable
-func (z spanLists) EncodeMsg(en *msgp.Writer) (err error) {
-	err = en.WriteArrayHeader(uint32(len(z)))
-	if err != nil {
-		err = msgp.WrapError(err)
-		return
-	}
-	for zb0005 := range z {
-		err = en.WriteArrayHeader(uint32(len(z[zb0005])))
-		if err != nil {
-			err = msgp.WrapError(err, zb0005)
-			return
-		}
-		for zb0006 := range z[zb0005] {
-			if z[zb0005][zb0006] == nil {
-				err = en.WriteNil()
-				if err != nil {
-					return
-				}
-			} else {
-				err = z[zb0005][zb0006].EncodeMsg(en)
-				if err != nil {
-					err = msgp.WrapError(err, zb0005, zb0006)
-					return
-				}
-			}
-		}
-	}
-	return
-}
-
-// Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
-func (z spanLists) Msgsize() (s int) {
-	s = msgp.ArrayHeaderSize
-	for zb0005 := range z {
-		s += msgp.ArrayHeaderSize
-		for zb0006 := range z[zb0005] {
-			if z[zb0005][zb0006] == nil {
-				s += msgp.NilSize
-			} else {
-				s += z[zb0005][zb0006].Msgsize()
-			}
-		}
 	}
 	return
 }

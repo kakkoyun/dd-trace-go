@@ -21,16 +21,7 @@ import (
 	"github.com/DataDog/dd-trace-go/v2/internal/log"
 )
 
-type traceWriter interface {
-	// add adds traces to be sent by the writer.
-	add([]*Span)
-
-	// flush causes the writer to send any buffered traces.
-	flush()
-
-	// stop gracefully shuts down the writer.
-	stop()
-}
+var _ traceWriter = (*agentTraceWriter)(nil)
 
 type agentTraceWriter struct {
 	// config holds the tracer configuration
@@ -52,6 +43,7 @@ type agentTraceWriter struct {
 	// statsd is used to send metrics
 	statsd globalinternal.StatsdClient
 
+	// +checkatomic
 	tracesQueued uint32
 }
 
@@ -65,12 +57,13 @@ func newAgentTraceWriter(c *config, s *prioritySampler, statsdClient globalinter
 	}
 }
 
-func (h *agentTraceWriter) add(trace []*Span) {
+func (h *agentTraceWriter) add(trace serializableTrace) {
 	if err := h.payload.push(trace); err != nil {
 		h.statsd.Incr("datadog.tracer.traces_dropped", []string{"reason:encoding_error"}, 1)
 		log.Error("Error encoding msgpack: %s", err.Error())
 	}
-	atomic.AddUint32(&h.tracesQueued, 1) // TODO: This does not differentiate between complete traces and partial chunks
+	// TODO: This does not differentiate between complete traces and partial chunks
+	atomic.AddUint32(&h.tracesQueued, 1)
 	if h.payload.size() > payloadSizeLimit {
 		h.statsd.Incr("datadog.tracer.flush_triggered", []string{"reason:size"}, 1)
 		h.flush()
@@ -201,23 +194,23 @@ func encodeFloat(p []byte, f float64) []byte {
 	return p
 }
 
-func (h *logTraceWriter) encodeSpan(s *Span) {
+func (h *logTraceWriter) encodeSpan(s readOnlySpan) {
 	var scratch [maxFloatLength]byte
 	h.buf.WriteString(`{"trace_id":"`)
-	h.buf.Write(strconv.AppendUint(scratch[:0], uint64(s.traceID), 16))
+	h.buf.Write(strconv.AppendUint(scratch[:0], uint64(s.getTraceID()), 16))
 	h.buf.WriteString(`","span_id":"`)
-	h.buf.Write(strconv.AppendUint(scratch[:0], uint64(s.spanID), 16))
+	h.buf.Write(strconv.AppendUint(scratch[:0], uint64(s.getSpanID()), 16))
 	h.buf.WriteString(`","parent_id":"`)
-	h.buf.Write(strconv.AppendUint(scratch[:0], uint64(s.parentID), 16))
+	h.buf.Write(strconv.AppendUint(scratch[:0], uint64(s.getParentID()), 16))
 	h.buf.WriteString(`","name":`)
-	h.marshalString(s.name)
+	h.marshalString(s.getName())
 	h.buf.WriteString(`,"resource":`)
-	h.marshalString(s.resource)
+	h.marshalString(s.getResource())
 	h.buf.WriteString(`,"error":`)
-	h.buf.Write(strconv.AppendInt(scratch[:0], int64(s.error), 10))
+	h.buf.Write(strconv.AppendInt(scratch[:0], int64(s.getErrorStatus()), 10))
 	h.buf.WriteString(`,"meta":{`)
 	first := true
-	for k, v := range s.meta {
+	for k, v := range s.getMetadata() {
 		if first {
 			first = false
 		} else {
@@ -228,7 +221,7 @@ func (h *logTraceWriter) encodeSpan(s *Span) {
 		h.marshalString(v)
 	}
 	// We cannot pack messagepack into JSON, so we need to marshal the meta struct as JSON, and send them through the `meta` field
-	for k, v := range s.metaStruct {
+	for k, v := range s.getMetaStruct() {
 		if first {
 			first = false
 		} else {
@@ -245,7 +238,7 @@ func (h *logTraceWriter) encodeSpan(s *Span) {
 	}
 	h.buf.WriteString(`},"metrics":{`)
 	first = true
-	for k, v := range s.metrics {
+	for k, v := range s.getMetrics() {
 		if math.IsNaN(v) || math.IsInf(v, 0) {
 			// The trace forwarder does not support infinity or nan, so we do not send metrics with those values.
 			continue
@@ -260,11 +253,11 @@ func (h *logTraceWriter) encodeSpan(s *Span) {
 		h.buf.Write(encodeFloat(scratch[:0], v))
 	}
 	h.buf.WriteString(`},"start":`)
-	h.buf.Write(strconv.AppendInt(scratch[:0], s.start, 10))
+	h.buf.Write(strconv.AppendInt(scratch[:0], s.getStartTime(), 10))
 	h.buf.WriteString(`,"duration":`)
-	h.buf.Write(strconv.AppendInt(scratch[:0], s.duration, 10))
+	h.buf.Write(strconv.AppendInt(scratch[:0], s.getDuration(), 10))
 	h.buf.WriteString(`,"service":`)
-	h.marshalString(s.service)
+	h.marshalString(s.getService())
 	h.buf.WriteString(`}`)
 }
 
@@ -291,7 +284,7 @@ type encodingError struct {
 // from the trace can be retried.
 // An error, if one is returned, indicates that a span in the trace is too large
 // to fit in one buffer, and the trace cannot be written.
-func (h *logTraceWriter) writeTrace(trace []*Span) (n int, err *encodingError) {
+func (h *logTraceWriter) writeTrace(trace serializableTrace) (n int, err *encodingError) {
 	startn := h.buf.Len()
 	if !h.hasTraces {
 		h.buf.WriteByte('[')
@@ -331,7 +324,7 @@ func (h *logTraceWriter) writeTrace(trace []*Span) (n int, err *encodingError) {
 }
 
 // add adds a trace to the writer's buffer.
-func (h *logTraceWriter) add(trace []*Span) {
+func (h *logTraceWriter) add(trace serializableTrace) {
 	// Try adding traces to the buffer until we flush them all or encounter an error.
 	for len(trace) > 0 {
 		n, err := h.writeTrace(trace)
