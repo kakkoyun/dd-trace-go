@@ -61,7 +61,7 @@ test-integration: tools-install ## Run integration tests
 	$(BIN_PATH) ./scripts/test.sh --integration
 
 .PHONY: fix-modules
-fix-modules: tools-install ## Fix module dependencies and consistency
+fix-modules: tools-install ## Fix module dependencies and consistencygo mod graph | grep "dd-trace-go.*v2.2.3"
 	$(BIN_PATH) ./scripts/fix_modules.sh
 
 tmp/make-help.txt: ## Generate make help output for documentation
