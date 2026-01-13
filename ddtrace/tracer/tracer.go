@@ -127,7 +127,7 @@ type tracer struct {
 	spansStarted, spansFinished globalinternal.XSyncMapCounterMap
 
 	// Keeps track of the total number of traces dropped for accurate logging.
-	totalTracesDropped uint32
+	totalTracesDropped uint32 // +checkatomic
 
 	logDroppedTraces *time.Ticker
 
@@ -171,8 +171,8 @@ type tracer struct {
 	// State related to the Dynamic Instrumentation product.
 	dynInstMu struct {
 		locking.Mutex
-		ldSubscriptionToken    remoteconfig.SubscriptionToken
-		symDBSubscriptionToken remoteconfig.SubscriptionToken
+		ldSubscriptionToken    remoteconfig.SubscriptionToken // +checklocks:Mutex
+		symDBSubscriptionToken remoteconfig.SubscriptionToken // +checklocks:Mutex
 	}
 }
 
