@@ -41,7 +41,7 @@ type agentTraceWriter struct {
 	mu locking.Mutex
 
 	// payload encodes and buffers traces in msgpack format
-	payload payload
+	payload payload // +checklocks:mu
 
 	// climit limits the number of concurrent outgoing connections
 	climit chan struct{}
@@ -56,7 +56,7 @@ type agentTraceWriter struct {
 	// statsd is used to send metrics
 	statsd globalinternal.StatsdClient
 
-	tracesQueued uint32
+	tracesQueued uint32 // +checkatomic
 }
 
 func newAgentTraceWriter(c *config, s *prioritySampler, statsdClient globalinternal.StatsdClient) *agentTraceWriter {
