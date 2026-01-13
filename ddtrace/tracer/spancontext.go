@@ -109,10 +109,13 @@ type SpanContext struct {
 	traceID traceID
 	spanID  uint64
 
-	mu         locking.RWMutex // guards below fields
-	baggage    map[string]string
-	hasBaggage uint32 // atomic int for quick checking presence of baggage. 0 indicates no baggage, otherwise baggage exists.
-	origin     string // e.g. "synthetics"
+	// guards below fields
+	mu      locking.RWMutex
+	baggage map[string]string
+	// atomic int for quick checking presence of baggage. 0 indicates no baggage, otherwise baggage exists.
+	hasBaggage uint32 // +checkatomic
+	// e.g. "synthetics"
+	origin string
 
 	spanLinks   []SpanLink // links to related spans in separate|external|disconnected traces
 	baggageOnly bool       // when true, indicates this context only propagates baggage items and should not be used for distributed tracing fields
