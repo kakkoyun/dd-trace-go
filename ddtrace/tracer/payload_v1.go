@@ -79,10 +79,10 @@ type payloadV1 struct {
 	writeOff int
 
 	// count specifies the number of items (traceChunks) in the stream.
-	count uint32
+	count uint32 // +checkatomic
 
 	// fields specifies the number of fields in the payload.
-	fields uint32
+	fields uint32 // +checkatomic
 
 	// buf holds the sequence of msgpack-encoded items.
 	buf []byte
