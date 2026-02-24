@@ -395,6 +395,7 @@ func (s *Span) setTags(tags map[string]any) {
 }
 
 // setTagLocked sets a tag on the span. This method assumes the span lock is already held.
+// +checklocks:s.mu
 func (s *Span) setTagLocked(key string, value any) {
 	assert.RWMutexLocked(&s.mu)
 
